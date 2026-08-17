@@ -1,3 +1,18 @@
+# Changelog
+
+## v0.7.0
+
+- Marketing xizmatlari uchun yangi professional Contract Builder.
+- Shartnoma mijoz, biznes/brend va loyiha bilan biriktiriladi.
+- A4 jonli ko‘rinish Mening Tizimim firma blankasi/watermark fonida.
+- Asosiy nom: “MARKETING XIZMATLARI KO‘RSATISH BO‘YICHA HAMKORLIK SHARTNOMASI”.
+- SMM, mobilografiya, montaj, target va boshqa xizmatlar sarlavha ostida qavs ichida dinamik ko‘rsatiladi.
+- Bajaruvchi, Buyurtmachi va hamkorlik shartlari uchun bo‘limli builder.
+- Contract progress indikatori, saqlash, reset, yangi hujjat va full preview.
+- Word (.doc) eksport va browser Print/PDF oqimi.
+- Mavjud shartnomani builder ichida ochish/tahrirlash.
+- v0.6 localStorage ma’lumotlari v0.7 ga migratsiya qilinadi.
+
 # v0.6.0
 
 - Payment Control: invoice, debitor va qoldiq to‘lovlar moduli.
@@ -8,7 +23,6 @@
 - Payment deadline Kalendar va global qidiruvga qo‘shildi.
 - Dashboard payment pulse va v0.6 local/cloud migratsiya.
 
-# Changelog
 
 ## 0.5.1 — Build hotfix
 - Fixed invalid `Work` icon import from `lucide-react` by using `BriefcaseBusiness`.

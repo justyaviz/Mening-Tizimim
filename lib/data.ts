@@ -43,6 +43,20 @@ export type Contract = {
   title: string;
   client: string;
   project: string;
+  clientId?: string;
+  business?: string;
+  number?: string;
+  city?: string;
+  contractDate?: string;
+  executorName?: string;
+  executorStatus?: string;
+  customerLegalName?: string;
+  customerTin?: string;
+  customerRepresentative?: string;
+  customerRole?: string;
+  services?: string[];
+  revisionLimit?: number;
+  terminationDays?: number;
   status: ContractStatus;
   amount: number;
   currency: Currency;
@@ -197,7 +211,7 @@ export const seedData: AppData = {
     { id: "c-new", name: "New client", company: "Web Project", role: "Web mijoz", phone: "", telegram: "", instagram: "", status: "active", source: "Referral", note: "Website development." },
   ],
   contracts: [
-    { id: "ct-smm", title: "SMM xizmat shartnomasi", client: "Volidam Patir", project: "SMM loyiha", status: "ending", amount: 1200, currency: "USD", billing: "monthly", startDate: "2026-08-01", endDate: "2026-08-25", paymentDay: 1, note: "Muddatni uzaytirish bo'yicha kelishish kerak." },
+    { id: "ct-smm", title: "Marketing xizmatlari bo‘yicha hamkorlik shartnomasi", client: "Volidam Patir", project: "SMM loyiha", business: "Volidam Patir", services: ["SMM boshqaruv", "Mobilografiya", "Video montaj", "Target reklama"], status: "ending", amount: 1200, currency: "USD", billing: "monthly", startDate: "2026-08-01", endDate: "2026-08-25", paymentDay: 1, note: "Muddatni uzaytirish bo‘yicha kelishish kerak." },
     { id: "ct-web", title: "Web development", client: "New client", project: "Web loyiha #01", status: "active", amount: 900, currency: "USD", billing: "one_time", startDate: "2026-08-10", endDate: "2026-09-01", paymentDay: 1, note: "Qoldiq to'lov yakunda." },
   ],
   transactions: [

@@ -1,6 +1,8 @@
 "use client";
 
-import { CalendarClock, Edit3, FileSignature, Search, Trash2 } from "lucide-react";
+import { CalendarClock, Edit3, ExternalLink, FileSignature, Search, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useAppData } from "@/components/data-provider";
 import { EmptyState, FormActions, Modal, PageHeader, StatusPill } from "@/components/ui";
@@ -8,7 +10,7 @@ import { formatMoney, makeId, type Contract, type ContractStatus, type Currency 
 
 const emptyContract = (): Contract => ({
   id: makeId("contract"),
-  title: "",
+  title: "Marketing xizmatlari bo‘yicha hamkorlik shartnomasi",
   client: "",
   project: "",
   status: "draft",
@@ -23,6 +25,7 @@ const emptyContract = (): Contract => ({
 
 export default function ContractsPage() {
   const { data, addContract, updateContract, removeContract } = useAppData();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | ContractStatus>("all");
   const [open, setOpen] = useState(false);
@@ -34,7 +37,7 @@ export default function ContractsPage() {
     return match && (filter === "all" || contract.status === filter);
   }), [data.contracts, query, filter]);
 
-  function addNew() { setEditing(emptyContract()); setOpen(true); }
+  function addNew() { router.push("/contracts/builder"); }
   function edit(item: Contract) { setEditing({ ...item }); setOpen(true); }
   function save(e: React.FormEvent) {
     e.preventDefault();
@@ -49,7 +52,7 @@ export default function ContractsPage() {
 
   return (
     <div className="pageWrap">
-      <PageHeader eyebrow="CONTRACT CONTROL" title="Shartnomalar" subtitle="Muddat, qiymat, to‘lov sanasi va shartnoma holatini nazorat qiling." actionLabel="Yangi shartnoma" onAction={addNew} />
+      <PageHeader eyebrow="CONTRACT CONTROL" title="Shartnomalar" subtitle="Marketing xizmatlari bo‘yicha shartnomalarni mijoz, biznes va loyihaga biriktirib boshqaring." actionLabel="Yangi shartnoma" onAction={addNew} />
 
       <section className="summaryStrip">
         <div><span>Jami</span><strong>{data.contracts.length}</strong></div>
@@ -72,8 +75,8 @@ export default function ContractsPage() {
               <div className="entityIcon"><FileSignature size={20} /></div>
               <StatusPill value={contract.status} />
             </div>
-            <h2>{contract.title}</h2>
-            <p>{contract.client} · {contract.project || "Loyiha biriktirilmagan"}</p>
+            <h2>{contract.title || "Marketing xizmatlari bo‘yicha hamkorlik shartnomasi"}</h2>
+            <p>{contract.client || "Mijoz biriktirilmagan"} · {contract.business || contract.project || "Biznes biriktirilmagan"}</p>
             <div className="contractAmount">{formatMoney(contract.amount, contract.currency)} <span>{contract.billing === "monthly" ? "/ oy" : "bir martalik"}</span></div>
             <div className="contractDates">
               <div><span>Boshlanish</span><b>{contract.startDate}</b></div>
@@ -82,7 +85,8 @@ export default function ContractsPage() {
             <div className="paymentLine"><CalendarClock size={15} /><span>To‘lov kuni: har oyning <b>{contract.paymentDay}-sanasi</b></span></div>
             {contract.note && <div className="noteBox">{contract.note}</div>}
             <div className="entityActions">
-              <button onClick={() => edit(contract)}><Edit3 size={15} /> Tahrirlash</button>
+              <Link className="buttonLikeLink" href={`/contracts/builder?id=${contract.id}`}><ExternalLink size={15} /> Hujjatni ochish</Link>
+              <button onClick={() => edit(contract)}><Edit3 size={15} /> Tezkor tahrirlash</button>
               <button className="dangerButton" onClick={() => window.confirm("Shartnomani o‘chirasizmi?") && removeContract(contract.id)}><Trash2 size={15} /></button>
             </div>
           </article>
