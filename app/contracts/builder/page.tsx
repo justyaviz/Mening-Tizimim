@@ -240,15 +240,15 @@ function ContractBuilderContent() {
               <p><b>2.2.</b> Reklama platformalariga to‘lanadigan reklama budjeti xizmat haqiga kirmaydi, agar Taraflar yozma ravishda boshqacha kelishmagan bo‘lsa.</p>
               <p><b>2.3.</b> Murakkab 3D, VFX, professional studiya, aktyor/model, maxsus lokatsiya va uchinchi tomon xizmatlari alohida kelishiladi.</p>
             </LegalSection>
-          </ContractPage>
-
-          <ContractPage page={2}>
             <LegalSection n="3" title="KONTENT, TASDIQLASH VA TUZATISHLAR">
               <p><b>3.1.</b> Kontent hajmi marketing ehtiyojidan kelib chiqib rejalashtiriladi va loyiha bo‘yicha alohida kelishiladi.</p>
               <p><b>3.2.</b> Tayyor materiallar Buyurtmachining mas’ul vakiliga Telegram, WhatsApp yoki boshqa kelishilgan kanal orqali tasdiqlash uchun yuborilishi mumkin.</p>
               <p><b>3.3.</b> Har bir material bo‘yicha standart tuzatishlar soni <b>{draft.revisionLimit || 0} martagacha</b>.</p>
               <p><b>3.4.</b> Tasdiqlangan konsepsiyani to‘liq o‘zgartirish, qayta syomka yoki dastlabki topshiriqdan sezilarli farq qiluvchi o‘zgartirish yangi topshiriq deb baholanishi mumkin.</p>
             </LegalSection>
+          </ContractPage>
+
+          <ContractPage page={2}>
             <LegalSection n="4" title="BUYURTMACHINING MAJBURIYATLARI">
               <p><b>4.1.</b> Ish uchun zarur ma’lumotlar, narxlar, aksiyalar, materiallar va kirish huquqlarini o‘z vaqtida taqdim etadi.</p>
               <p><b>4.2.</b> Kontent va reklama materiallarini imkon qadar o‘z vaqtida tasdiqlaydi.</p>
@@ -264,14 +264,14 @@ function ContractBuilderContent() {
               <p><b>6.1.</b> Reklama natijalari budjet, mahsulot narxi, auditoriya talabi, mavsum, kreativ, savdo bo‘limi va platforma algoritmlariga bog‘liq.</p>
               <p><b>6.2.</b> Alohida yozma KPI bo‘lmasa, Bajaruvchi aniq miqdordagi sotuv, lead, obunachi, ko‘rish yoki daromadni kafolatlamaydi.</p>
             </LegalSection>
-          </ContractPage>
-
-          <ContractPage page={3}>
             <LegalSection n="7" title="XIZMAT HAQI VA TO‘LOV TARTIBI">
               <p><b>7.1.</b> Bajaruvchining xizmatlari uchun oylik xizmat haqi <b>{draft.amount ? formatMoney(draft.amount, draft.currency) : "________________"}</b> etib belgilanadi.</p>
               <p><b>7.2.</b> To‘lov har oyning <b>{draft.paymentDay || "___"}-sanasigacha</b> amalga oshiriladi.</p>
               <p><b>7.3.</b> Reklama budjeti, blogger, aktyor, model, studiya, transport, rekvizit va uchinchi tomon xarajatlari alohida to‘lanadi.</p>
             </LegalSection>
+          </ContractPage>
+
+          <ContractPage page={3}>
             <LegalSection n="8" title="SHARTNOMA MUDDATI">
               <p><b>8.1.</b> Shartnoma <b>{readableDate(draft.startDate)}</b> dan <b>{readableDate(draft.endDate)}</b> gacha amal qiladi.</p>
               <p><b>8.2.</b> Hamkorlik davom ettirilsa, Taraflar muddatni yangi qo‘shimcha kelishuv bilan uzaytirishi mumkin.</p>
@@ -285,9 +285,6 @@ function ContractBuilderContent() {
               <p><b>10.2.</b> Haqi to‘langan yakuniy materiallardan Buyurtmachi o‘z biznes faoliyatida foydalanishi mumkin.</p>
               <p><b>10.3.</b> Taraflar moliyaviy ma’lumotlar, loginlar, strategiyalar, mijozlar bazasi va e’lon qilinmagan loyihalarni maxfiy saqlaydi.</p>
             </LegalSection>
-          </ContractPage>
-
-          <ContractPage page={4}>
             <LegalSection n="11" title="ELEKTRON ALOQA VA ISHCHI YOZISHMALAR">
               <p><b>11.1.</b> Telegram, WhatsApp, elektron pochta va Taraflar kelishgan boshqa aloqa kanallaridagi texnik topshiriqlar, tasdiqlar, syomka sanalari, tuzatishlar va kundalik ko‘rsatmalar ishchi yozishmalar sifatida qabul qilinadi.</p>
               <p><b>11.2.</b> Oylik narx, muddat va boshqa asosiy moliyaviy shartlarni o‘zgartirish alohida yozma kelishuv bilan rasmiylashtiriladi.</p>
@@ -303,7 +300,7 @@ function ContractBuilderContent() {
               <p><b>13.2.</b> Qo‘shimcha shartlar: {blank(draft.note, "yo‘q")}</p>
             </LegalSection>
             <h2>TARAFLARNING REKVIZITLARI VA IMZOLARI</h2>
-            <div className="signatureGrid">
+            <div className="signatureGrid compact">
               <div className="signatureBox"><b>BUYURTMACHI</b><p>{blank(draft.customerLegalName || draft.business)}</p><p>Vakil: {blank(draft.customerRepresentative)}</p><p>Lavozimi: {blank(draft.customerRole)}</p><p>STIR: {blank(draft.customerTin)}</p><p className="signatureLine">Imzo: __________________</p></div>
               <div className="signatureBox"><b>BAJARUVCHI</b><p>{blank(draft.executorName)}</p><p>{blank(draft.executorStatus)}</p><p className="signatureLine">Imzo: __________________</p></div>
             </div>

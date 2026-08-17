@@ -1,3 +1,11 @@
+# Mening Tizimim Changelog
+
+## v0.7.2
+- Contract preview header spacing fixed so document title no longer overlaps the logo area.
+- Contract pagination rebalanced from 4 sparse pages to 3 fuller pages.
+- Signature section compacted for a cleaner last page.
+- Improved legal text spacing for denser A4 layout.
+
 # Changelog
 
 ## v0.7.1
