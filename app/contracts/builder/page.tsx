@@ -117,6 +117,21 @@ function PaperBackground() {
   return <img src="/mening-tizimim-letterhead.png" alt="" className="contractPaperBg" />;
 }
 
+function buildVerifyUrl(documentId: string, number?: string, contractDate?: string, business?: string) {
+  const params = new URLSearchParams({
+    doc: documentId,
+    number: number || "",
+    date: contractDate || "",
+    business: business || "",
+  });
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://meningtizimim.uz";
+  return `${origin}/verify?${params.toString()}`;
+}
+
+function buildQrUrl(payload: string) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encodeURIComponent(payload)}`;
+}
+
 function ContractPage({ children, page, contractNo, documentId }: { children: React.ReactNode; page: number; contractNo?: string; documentId: string }) {
   return (
     <article className="contractPaper" data-contract-page={page}>
@@ -179,6 +194,9 @@ function ContractBuilderContent() {
     const clean = (draft.number || draft.id).replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toUpperCase();
     return `MT-CN-${new Date().getFullYear()}-${clean.slice(-16) || "NEW"}`;
   }, [draft.id, draft.number]);
+  const verifyUrl = useMemo(() => buildVerifyUrl(documentId, draft.number, draft.contractDate, draft.business), [documentId, draft.number, draft.contractDate, draft.business]);
+  const qrUrl = useMemo(() => buildQrUrl(verifyUrl), [verifyUrl]);
+  const verificationCode = useMemo(() => documentId.replace(/[^0-9]/g, "").slice(-4) || documentId.slice(-4), [documentId]);
 
   const has = (name: string) => Boolean(draft.services?.includes(name));
 
@@ -241,7 +259,7 @@ function ContractBuilderContent() {
     const body = pages
       .map((page) => `<div class="page">${page.querySelector(".contractPaperContent")?.innerHTML || ""}</div>`)
       .join("");
-    const html = `<!doctype html><html><head><meta charset="utf-8"><style>@page{size:A4;margin:25mm 18mm 20mm}body{font-family:'Times New Roman',serif;font-size:11pt;line-height:1.45;color:#111}.page{page-break-after:always}.page:last-child{page-break-after:auto}h1{text-align:center;font-size:14pt}h2{text-align:center;font-size:11.5pt;margin-top:18px}.contractSubtitle{text-align:center;font-size:9.5pt}.contractLead,.legalBody p{text-align:justify}.appendixTable{width:100%;border-collapse:collapse}.appendixRow{display:flex;border-bottom:1px solid #ddd;padding:5px 0}.appendixRow b{width:42%}.signatureGrid{display:grid;grid-template-columns:1fr 1fr;gap:30px}</style></head><body>${body}</body></html>`;
+    const html = `<!doctype html><html><head><meta charset="utf-8"><style>@page{size:A4;margin:25mm 18mm 20mm}body{font-family:'Times New Roman',serif;font-size:11pt;line-height:1.45;color:#111}.page{page-break-after:always}.page:last-child{page-break-after:auto}h1{text-align:center;font-size:14pt}h2{text-align:center;font-size:11.5pt;margin-top:18px}.contractSubtitle{text-align:center;font-size:9.5pt}.contractLead,.legalBody p{text-align:justify}.appendixTable{width:100%;border-collapse:collapse}.appendixRow{display:flex;border-bottom:1px solid #ddd;padding:5px 0}.appendixRow b{width:42%}.signatureGrid{display:grid;grid-template-columns:1fr 1fr;gap:30px}.documentVerification{margin-top:18px;border:1px solid #d8e4ef;background:#f7fbff;padding:14px;display:flex;justify-content:space-between;gap:16px;align-items:center}.documentVerification img{width:110px;height:110px;object-fit:contain}.documentVerification b{display:block;margin-bottom:6px}.verifyCodeBig{font-size:28px;line-height:1;font-weight:700;color:#274762}.verifyUrl{font-size:8pt;color:#4d6478;word-break:break-all}</style></head><body>${body}</body></html>`;
     const blob = new Blob(["\ufeff", html], { type: "application/msword" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -654,7 +672,21 @@ function ContractBuilderContent() {
                   <div className="signatureArea"><span>Imzo:</span><b>________________________</b></div>
                 </div>
               </div>
-              <div className="documentVerification"><b>HUJJAT IDENTIFIKATSIYASI</b><span>{documentId}</span><p>Ushbu identifikator Mening Tizimim platformasida ushbu shartnomaga biriktirilgan yagona hujjat kodidir.</p></div>
+              <div className="documentVerification">
+                <div className="verifyTextBlock">
+                  <b>MENING TIZIMIM ELEKTRON HUJJAT TEKSHIRUVI</b>
+                  <p>Mazkur hujjat Mening Tizimim platformasida yaratilgan elektron nusxa hisoblanadi. Hujjatning haqiqiyligini tekshirish uchun QR-kodni skaner qiling yoki hujjat identifikatori orqali tizimdagi tekshiruv sahifasini oching.</p>
+                  <div className="verifyMetaLines">
+                    <span><strong>Document ID:</strong> {documentId}</span>
+                    <span><strong>Qo‘lda tekshirish kodi:</strong> {verificationCode}</span>
+                    <span className="verifyUrl">{verifyUrl}</span>
+                  </div>
+                </div>
+                <div className="verifyQrWrap">
+                  <span className="verifyCodeBig">{verificationCode}</span>
+                  <img src={qrUrl} alt={`Hujjatni tekshirish QR kodi ${documentId}`} className="verifyQrImage" />
+                </div>
+              </div>
             </ContractPage>
           </div>
         </section>

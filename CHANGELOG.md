@@ -1,5 +1,10 @@
 # Mening Tizimim Changelog
 
+## v0.8.1
+- Shartnoma oxiriga QR asosidagi ichki elektron hujjat tekshiruvi qo‘shildi.
+- /verify sahifasi qo‘shildi: Document ID, raqam, sana va brendni tekshirish mumkin.
+- PDF/Word chiqishida oxirgi sahifada Document ID, qo‘lda tekshirish kodi va QR kod chiqadi.
+
 ## v0.8.0
 - Contract Builder qayta qurildi: asosiy shartnoma 19 ta bo‘lim bilan to‘liq struktura.
 - Xizmatlar tanloviga qarab SMM, mobilografiya, montaj, target va boshqa marketing xizmatlari dinamik chiqadi.
