@@ -3,7 +3,7 @@
 import { ArrowLeft, Check, Eye, FileDown, FilePlus2, RotateCcw, Save, Search } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useAppData } from "@/components/data-provider";
 import { formatMoney, makeId, type Contract, type Currency } from "@/lib/data";
 
@@ -70,7 +70,7 @@ function ContractPage({ children, page }: { children: React.ReactNode; page: num
   return <article className="contractPaper" data-contract-page={page}><PaperBackground /><div className="contractPaperContent">{children}</div><span className="contractPageNumber">{page}</span></article>;
 }
 
-export default function ContractBuilderPage() {
+function ContractBuilderContent() {
   const { data, addContract, updateContract } = useAppData();
   const params = useSearchParams();
   const editId = params.get("id");
@@ -312,6 +312,15 @@ export default function ContractBuilderPage() {
       </section>
     </div>
   </div>;
+}
+
+
+export default function ContractBuilderPage() {
+  return (
+    <Suspense fallback={<div className="contractBuilderLoading">Shartnoma konstruktori yuklanmoqda...</div>}>
+      <ContractBuilderContent />
+    </Suspense>
+  );
 }
 
 function BuilderCard({ title, children }: { title: string; children: React.ReactNode }) {

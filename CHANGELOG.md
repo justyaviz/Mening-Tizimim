@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1
+- Next.js build hotfix: `/contracts/builder` sahifasidagi `useSearchParams()` endi `Suspense` boundary ichida ishlaydi.
+- Static prerender paytidagi `missing-suspense-with-csr-bailout` xatosi tuzatildi.
+
 ## v0.7.0
 
 - Marketing xizmatlari uchun yangi professional Contract Builder.
