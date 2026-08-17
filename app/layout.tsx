@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DataProvider } from "@/components/data-provider";
+import { AppShell } from "@/components/app-shell";
 
 export const metadata: Metadata = {
-  title: "Mening Tizimim",
+  title: {
+    default: "Mening Tizimim",
+    template: "%s · Mening Tizimim",
+  },
   description: "Shaxsiy biznes, loyiha, mijoz, shartnoma va moliya boshqaruv platformasi.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="uz">
-      <body>{children}</body>
+      <body>
+        <DataProvider>
+          <AppShell>{children}</AppShell>
+        </DataProvider>
+      </body>
     </html>
   );
 }

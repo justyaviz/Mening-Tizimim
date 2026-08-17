@@ -1,24 +1,27 @@
-# Mening Tizimim — v0.1
+# Mening Tizimim — v0.2
 
-Personal business operating system for managing projects, clients, collaborations, contracts, finance, tasks and daily work.
+Personal business operating system for managing projects, clients, contracts, finance and daily work.
 
-## v0.1 includes
+## v0.2 includes
 
-- Responsive app shell and sidebar
-- Branded dashboard using the approved Mening Tizimim visual direction
-- KPI cards: active projects, income, expenses, expected payments
-- Active projects overview
-- Today's tasks
-- Income-by-service overview
-- Contract reminders
-- Mobile responsive navigation
+- Real App Router navigation for every sidebar item
+- Dashboard connected to shared local data
+- Projects module: search, filter, create, edit, delete, progress, deadline, pricing
+- Clients CRM: search, filter, create, edit, delete, contact details
+- Contracts module: create, edit, delete, status, dates, billing and payment day
+- Finance module: income/expense entries, filters, UZS/USD tracking and cash-flow summary
+- Local persistence with `localStorage`
+- Analytics preview using live local data
+- Tasks, Calendar, Partners and Settings route shells ready for v0.3
+- Responsive desktop/mobile layout
+- Mening Tizimim blue/navy brand system
 
-> Data is mock/demo data in v0.1. Backend, authentication and database are intentionally not connected yet.
+> v0.2 is still frontend-first. Data is saved in the current browser via localStorage. Authentication and a real cloud database are planned for a later version.
 
 ## Stack
 
-- Next.js
-- React
+- Next.js 15
+- React 19
 - TypeScript
 - Lucide icons
 - Plain CSS
@@ -32,11 +35,11 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Build
+## Quality checks
 
 ```bash
+npm run typecheck
 npm run build
-npm start
 ```
 
 ## Push to GitHub
@@ -44,22 +47,30 @@ npm start
 ```bash
 git init
 git add .
-git commit -m "Mening Tizimim v0.1"
+git commit -m "Mening Tizimim v0.2"
 git branch -M main
 git remote add origin YOUR_GITHUB_REPOSITORY_URL
 git push -u origin main
 ```
 
-## Suggested v0.2
+If v0.1 is already in the repository:
 
-1. Real sidebar routing
-2. Projects CRUD
-3. Clients CRM
-4. Contracts module
-5. Finance income/expense entries
-6. Supabase/PostgreSQL database
-7. Authentication
-8. Notifications
+```bash
+git add .
+git commit -m "Upgrade Mening Tizimim to v0.2"
+git push
+```
+
+## Suggested v0.3
+
+1. Supabase/PostgreSQL database
+2. Authentication and private admin account
+3. Full Tasks CRUD + reminders
+4. Calendar events and deadlines
+5. Partners/team cost tracking
+6. Project detail page with activity history
+7. Contract file upload
+8. Monthly P&L and profitability analytics
 
 ## Brand
 
@@ -67,4 +78,3 @@ git push -u origin main
 - Dark navy: `#091735`
 - Secondary blue: `#098FFC`
 - Font direction: Poppins
-
