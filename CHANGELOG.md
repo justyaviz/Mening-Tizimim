@@ -1,5 +1,11 @@
 # Mening Tizimim Changelog
 
+## v0.9.1
+- Supabase davridan qolib ketgan `components/auth-provider.tsx` uchun dependency-free compatibility shim qo‘shildi.
+- `lib/supabase.ts` dependency-free shim bilan almashtirildi.
+- `@supabase/supabase-js` endi kerak emas; Railway PostgreSQL asosiy data storage bo‘lib qoladi.
+- Eski repo ustiga fayllar ko‘chirilganda ham TypeScript build Supabase importi sabab yiqilmaydi.
+
 ## v0.9.0
 - Railway PostgreSQL yagona source of truth bo‘ldi.
 - Barcha demo seed ma’lumotlar olib tashlandi; yangi database bo‘sh holatda boshlanadi.

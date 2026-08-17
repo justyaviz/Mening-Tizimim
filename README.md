@@ -25,3 +25,7 @@ npm run dev
 - `payload` — barcha Projects, Clients, Contracts, Finance, Invoices, Tasks, Partners, Work Logs, Lessons, Services, Goals va Client Interactions uchun JSONB source of truth.
 - Har bir UI o‘zgarishi `/api/workspace` orqali PostgreSQL'ga avtomatik saqlanadi.
 - Demo fallback yo‘q. Database ishlamasa tizim `error` holatini ko‘rsatadi va ma’lumotni yashirincha localStorage'ga saqlamaydi.
+
+## v0.9.1 upgrade note
+
+Agar repo v0.8.x dan yangilanayotgan bo‘lsa, eski `components/auth-provider.tsx` va `lib/supabase.ts` fayllari Git tarixida qolib ketishi mumkin. v0.9.1 ularni dependency-free compatibility shim bilan overwrite qiladi. `@supabase/supabase-js` o‘rnatish kerak emas.

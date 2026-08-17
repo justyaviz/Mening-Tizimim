@@ -1,25 +1,11 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-
-let client: SupabaseClient | null | undefined;
-
+/**
+ * Compatibility shim for repositories upgraded from v0.8.x.
+ * v0.9+ stores application data in Railway PostgreSQL and does not use Supabase.
+ */
 export function isSupabaseConfigured() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  return false;
 }
 
 export function getSupabaseClient() {
-  if (client !== undefined) return client;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) {
-    client = null;
-    return client;
-  }
-  client = createClient(url, key, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  });
-  return client;
+  return null;
 }
