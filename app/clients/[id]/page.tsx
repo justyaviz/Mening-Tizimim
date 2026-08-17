@@ -82,6 +82,7 @@ export default function ClientDetailPage() {
   const activeContracts = linked.contracts.filter((c) => c.status === "active" || c.status === "ending").length;
 
   function addNew() {
+    if (!client) return;
     setEditing(emptyInteraction(client.id, client.name));
     setOpen(true);
   }
@@ -93,7 +94,7 @@ export default function ClientDetailPage() {
 
   function save(event: React.FormEvent) {
     event.preventDefault();
-    if (!editing?.title.trim()) return;
+    if (!client || !editing?.title.trim()) return;
     const next = { ...editing, clientId: client.id, clientName: client.name };
     data.interactions.some((item) => item.id === next.id) ? updateInteraction(next) : addInteraction(next);
     setOpen(false);

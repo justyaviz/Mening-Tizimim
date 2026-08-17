@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock3, Edit3, Search, Trash2, Work } from "lucide-react";
+import { BriefcaseBusiness, Clock3, Edit3, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useAppData } from "@/components/data-provider";
 import { EmptyState, FormActions, Modal, PageHeader } from "@/components/ui";
@@ -50,7 +50,7 @@ export default function WorkPage() {
         {filtered.map((item) => (
           <article className="workLogCard cardLike" key={item.id}>
             <div className="workDate"><span>{item.date}</span><i /></div>
-            <div className="workIcon"><Work size={18} /></div>
+            <div className="workIcon"><BriefcaseBusiness size={18} /></div>
             <div className="workMain">
               <div className="workTitleRow"><div><strong>{item.title}</strong><p>{item.project || "Umumiy"} · {item.category || "Kategoriya yo‘q"}</p></div><span className="timeChip"><Clock3 size={13} /> {minutesLabel(item.durationMinutes)}</span></div>
               {item.result && <div className="workResult"><span>Natija</span><p>{item.result}</p></div>}

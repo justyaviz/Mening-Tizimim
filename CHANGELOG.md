@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1 — Build hotfix
+- Fixed invalid `Work` icon import from `lucide-react` by using `BriefcaseBusiness`.
+- Fixed strict TypeScript narrowing in `/clients/[id]` event handlers where `client` could be considered undefined.
+- Replaced CSS `align-items: end` with `align-items: flex-end` to remove the autoprefixer mixed-support warning.
+
 ## 0.5.0 — 2026-08-17
 
 ### Added
