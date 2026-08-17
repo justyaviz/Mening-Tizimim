@@ -154,6 +154,8 @@ function ContractBuilderContent() {
   const [section, setSection] = useState("contract");
   const [previewOnly, setPreviewOnly] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState("");
 
   useEffect(() => {
     if (!editId) return;
@@ -197,6 +199,15 @@ function ContractBuilderContent() {
   const verifyUrl = useMemo(() => buildVerifyUrl(documentId, draft.number, draft.contractDate, draft.business), [documentId, draft.number, draft.contractDate, draft.business]);
   const qrUrl = useMemo(() => buildQrUrl(verifyUrl), [verifyUrl]);
   const verificationCode = useMemo(() => documentId.replace(/[^0-9]/g, "").slice(-4) || documentId.slice(-4), [documentId]);
+
+  useEffect(() => {
+    let active = true;
+    import("qrcode")
+      .then(({ default: QRCode }) => QRCode.toDataURL(verifyUrl, { width: 240, margin: 0, errorCorrectionLevel: "M" }))
+      .then((url) => { if (active) setQrDataUrl(url); })
+      .catch(() => { if (active) setQrDataUrl(""); });
+    return () => { active = false; };
+  }, [verifyUrl]);
 
   const has = (name: string) => Boolean(draft.services?.includes(name));
 
@@ -269,38 +280,65 @@ function ContractBuilderContent() {
     URL.revokeObjectURL(url);
   }
 
-  function pdfDownload() {
-    const pageNodes = Array.from(document.querySelectorAll<HTMLElement>("[data-contract-page]"));
-    if (!pageNodes.length) {
-      window.print();
-      return;
+  async function pdfDownload() {
+    const pages = Array.from(document.querySelectorAll<HTMLElement>("[data-contract-page]"));
+    if (!pages.length || pdfBusy) return;
+
+    setPdfBusy(true);
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
+      if (document.fonts?.ready) await document.fonts.ready;
+
+      const imageNodes = pages.flatMap((page) => Array.from(page.querySelectorAll<HTMLImageElement>("img")));
+      await Promise.all(imageNodes.map((img) => {
+        if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+        return new Promise<void>((resolve) => {
+          const done = () => resolve();
+          img.addEventListener("load", done, { once: true });
+          img.addEventListener("error", done, { once: true });
+          setTimeout(done, 2500);
+        });
+      }));
+
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
+
+      for (let index = 0; index < pages.length; index += 1) {
+        const page = pages[index];
+        const oldShadow = page.style.boxShadow;
+        const oldTransform = page.style.transform;
+        page.style.boxShadow = "none";
+        page.style.transform = "none";
+
+        const canvas = await html2canvas(page, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          logging: false,
+          backgroundColor: "#ffffff",
+          imageTimeout: 5000,
+          windowWidth: Math.max(document.documentElement.clientWidth, 1400),
+        });
+
+        page.style.boxShadow = oldShadow;
+        page.style.transform = oldTransform;
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.96);
+        if (index > 0) pdf.addPage("a4", "portrait");
+        pdf.addImage(imgData, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+      }
+
+      const safeNo = (draft.number || documentId).replace(/[^a-zA-Z0-9_-]+/g, "-");
+      pdf.save(`Mening-Tizimim-Shartnoma-${safeNo}.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed", error);
+      window.alert("PDF yaratishda xatolik yuz berdi. Sahifani yangilab qayta urinib ko‘ring.");
+    } finally {
+      setPdfBusy(false);
     }
-
-    const contentHtml = (index: number, stripAppendixHeader = false) => {
-      const source = pageNodes[index]?.querySelector<HTMLElement>(".contractPaperContent");
-      if (!source) return "";
-      const clone = source.cloneNode(true) as HTMLElement;
-      if (stripAppendixHeader) clone.querySelector(".appendixHeader")?.remove();
-      return clone.innerHTML;
-    };
-
-    document.getElementById("contractPrintPortal")?.remove();
-    const portal = document.createElement("div");
-    portal.id = "contractPrintPortal";
-    portal.innerHTML = `
-      <img class="printFlowBg" src="/mening-tizimim-letterhead.png" alt="" />
-      <div class="printFlowFooter"><span>Shartnoma № ${draft.number || "________"}</span><span>${documentId}</span></div>
-      <main class="printFlowContent">
-        ${[0, 1, 2, 3, 4].map((index) => contentHtml(index)).join("")}
-        <div class="printHardBreak"></div>
-        ${contentHtml(5)}${contentHtml(6, true)}
-        <div class="printHardBreak"></div>
-        ${contentHtml(7)}
-      </main>
-    `;
-    document.body.appendChild(portal);
-    window.addEventListener("afterprint", () => portal.remove(), { once: true });
-    window.print();
   }
 
   const nav = [
@@ -321,7 +359,7 @@ function ContractBuilderContent() {
           <button onClick={newDocument}><FilePlus2 size={16} /> Yangi hujjat</button>
           <button className="primary" onClick={saveContract}><Save size={16} /> {saved ? "Saqlandi" : "Saqlash"}</button>
           <button onClick={wordDownload}><FileDown size={16} /> Word yuklash</button>
-          <button onClick={pdfDownload}><FileDown size={16} /> PDF yuklash</button>
+          <button onClick={pdfDownload} disabled={pdfBusy}><FileDown size={16} /> {pdfBusy ? "PDF tayyorlanmoqda..." : "PDF yuklash"}</button>
           <button onClick={() => setPreviewOnly((v) => !v)}><Eye size={16} /> {previewOnly ? "Tahrirlash" : "Ko‘rinish"}</button>
         </div>
       </div>
@@ -684,7 +722,7 @@ function ContractBuilderContent() {
                 </div>
                 <div className="verifyQrWrap">
                   <span className="verifyCodeBig">{verificationCode}</span>
-                  <img src={qrUrl} alt={`Hujjatni tekshirish QR kodi ${documentId}`} className="verifyQrImage" />
+                  <img src={qrDataUrl || qrUrl} alt={`Hujjatni tekshirish QR kodi ${documentId}`} className="verifyQrImage" />
                 </div>
               </div>
             </ContractPage>

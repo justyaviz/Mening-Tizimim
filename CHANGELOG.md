@@ -1,5 +1,11 @@
 # Mening Tizimim Changelog
 
+## v0.8.2
+- PDF tugmasi endi brauzer Print oynasini ochmaydi; haqiqiy .pdf faylni to‘g‘ridan-to‘g‘ri generatsiya qilib yuklaydi.
+- A4 preview sahifalari PDFga aynan ko‘rinishidagi kabi render qilinadi.
+- Chrome header/footer (sana, URL, page count) PDFga tushmaydi.
+- QR kod lokal data-URL sifatida generatsiya qilinadi, PDF capture paytida yo‘qolib qolmaydi.
+
 ## v0.8.1
 - Shartnoma oxiriga QR asosidagi ichki elektron hujjat tekshiruvi qo‘shildi.
 - /verify sahifasi qo‘shildi: Document ID, raqam, sana va brendni tekshirish mumkin.
