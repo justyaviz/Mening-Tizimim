@@ -1,22 +1,20 @@
 # Changelog
 
-## 0.2.0 — Core management modules
+## v0.3.0 — Cloud + Tasks
 
-- Added shared persistent local data layer
-- Added functional sidebar routing
-- Added Projects CRUD and filtering
-- Added Clients CRM CRUD and filtering
-- Added Contracts CRUD and contract controls
-- Added Finance income/expense tracking
-- Connected dashboard metrics to live local data
-- Added Analytics preview
-- Added route shells for Partners, Tasks, Calendar and Settings
-- Improved responsive components, forms, modals and tables
+- Supabase Auth bilan email/parol login va signup oqimi qo‘shildi.
+- Supabase `workspace_data` cloud bazasi va RLS schema qo‘shildi.
+- Cloud sinxronlash + local backup ishlaydi; Supabase bo‘lmasa local demo rejimi saqlanadi.
+- Vazifalar moduli to‘liq CRUD, status, priority, deadline va reminder bilan ishlaydi.
+- Browser notification reminderlari ilova ochiq paytda ishlaydi.
+- Dashboard vazifalari endi real Task bazasidan olinadi.
+- Kalendar vazifa, loyiha deadline va shartnoma tugash sanalarini birlashtiradi.
+- Topbar notification center qo‘shildi.
+- Settings sahifasida sync holati, auth, RLS va JSON backup mavjud.
+- UI version v0.3 ga yangilandi.
 
-## 0.1.0 — Initial dashboard
+## v0.2.0
 
-- Initial Mening Tizimim project structure
-- Responsive dashboard UI
-- Sidebar and top navigation
-- Project, task, finance and contract widgets
-- Initial brand colors and logo assets
+- Projects, Clients, Contracts va Finance CRUD.
+- LocalStorage persistence.
+- Dashboard va analytics preview.

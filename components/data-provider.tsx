@@ -1,14 +1,20 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { AppData, Client, Contract, Project, Transaction } from "@/lib/data";
-import { seedData } from "@/lib/data";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { AppData, Client, Contract, Project, Task, Transaction } from "@/lib/data";
+import { normalizeData, seedData } from "@/lib/data";
+import { getSupabaseClient } from "@/lib/supabase";
+import { useAuth } from "@/components/auth-provider";
 
-const STORAGE_KEY = "mening-tizimim-v0.2-data";
+const STORAGE_KEY = "mening-tizimim-v0.3-data";
+const OLD_STORAGE_KEY = "mening-tizimim-v0.2-data";
+
+export type SyncStatus = "local" | "loading" | "syncing" | "synced" | "error";
 
 type DataContextValue = {
   data: AppData;
   ready: boolean;
+  syncStatus: SyncStatus;
   addProject: (item: Project) => void;
   updateProject: (item: Project) => void;
   removeProject: (id: string) => void;
@@ -20,34 +26,161 @@ type DataContextValue = {
   removeContract: (id: string) => void;
   addTransaction: (item: Transaction) => void;
   removeTransaction: (id: string) => void;
+  addTask: (item: Task) => void;
+  updateTask: (item: Task) => void;
+  removeTask: (id: string) => void;
+  toggleTask: (id: string) => void;
+  replaceData: (next: AppData) => void;
   resetDemo: () => void;
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
+  const { configured, user, loading: authLoading } = useAuth();
   const [data, setData] = useState<AppData>(seedData);
   const [ready, setReady] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(configured ? "loading" : "local");
+  const hydratedFor = useRef<string | null>(null);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setData(JSON.parse(saved));
-    } catch {
-      setData(seedData);
-    } finally {
-      setReady(true);
+    if (authLoading) return;
+
+    let cancelled = false;
+
+    async function hydrate() {
+      if (!configured) {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
+          if (saved) setData(normalizeData(JSON.parse(saved)));
+        } catch {
+          setData(seedData);
+        } finally {
+          hydratedFor.current = "local";
+          setReady(true);
+          setSyncStatus("local");
+        }
+        return;
+      }
+
+      if (!user) {
+        hydratedFor.current = null;
+        setReady(false);
+        setSyncStatus("loading");
+        return;
+      }
+
+      if (hydratedFor.current === user.id) return;
+      setReady(false);
+      setSyncStatus("loading");
+
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
+
+      try {
+        const { data: row, error } = await supabase
+          .from("workspace_data")
+          .select("payload")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (cancelled) return;
+
+        if (row?.payload) {
+          setData(normalizeData(row.payload as Partial<AppData>));
+        } else {
+          const userBackup = localStorage.getItem(`${STORAGE_KEY}-${user.id}`);
+          const local = userBackup || localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
+          const initial = local ? normalizeData(JSON.parse(local)) : seedData;
+          setData(initial);
+          const { error: insertError } = await supabase.from("workspace_data").upsert({
+            user_id: user.id,
+            payload: initial,
+            updated_at: new Date().toISOString(),
+          });
+          if (insertError) throw insertError;
+        }
+
+        hydratedFor.current = user.id;
+        setReady(true);
+        setSyncStatus("synced");
+      } catch (error) {
+        console.error("Cloud hydrate failed", error);
+        if (cancelled) return;
+        try {
+          const saved = localStorage.getItem(`${STORAGE_KEY}-${user.id}`);
+          setData(saved ? normalizeData(JSON.parse(saved)) : seedData);
+        } catch {
+          setData(seedData);
+        }
+        hydratedFor.current = user.id;
+        setReady(true);
+        setSyncStatus("error");
+      }
     }
-  }, []);
+
+    hydrate();
+    return () => { cancelled = true; };
+  }, [authLoading, configured, user]);
 
   useEffect(() => {
     if (!ready) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [data, ready]);
+    try {
+      const backupKey = configured && user ? `${STORAGE_KEY}-${user.id}` : STORAGE_KEY;
+      localStorage.setItem(backupKey, JSON.stringify(data));
+    } catch {
+      // local backup is best-effort
+    }
+
+    if (!configured || !user || hydratedFor.current !== user.id) return;
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    setSyncStatus("syncing");
+    const timer = window.setTimeout(async () => {
+      const { error } = await supabase.from("workspace_data").upsert({
+        user_id: user.id,
+        payload: data,
+        updated_at: new Date().toISOString(),
+      });
+      setSyncStatus(error ? "error" : "synced");
+      if (error) console.error("Cloud sync failed", error);
+    }, 650);
+
+    return () => window.clearTimeout(timer);
+  }, [data, ready, configured, user]);
+
+  useEffect(() => {
+    if (!ready || typeof window === "undefined" || !("Notification" in window)) return;
+
+    const check = () => {
+      if (Notification.permission !== "granted") return;
+      const now = Date.now();
+      data.tasks.forEach((task) => {
+        if (task.status === "done" || !task.reminderAt) return;
+        const reminder = new Date(task.reminderAt).getTime();
+        const diff = now - reminder;
+        if (!Number.isFinite(reminder) || diff < 0 || diff > 12 * 60 * 60 * 1000) return;
+        const seenKey = `mening-tizimim-reminder-${task.id}-${task.reminderAt}`;
+        if (sessionStorage.getItem(seenKey)) return;
+        new Notification("Mening Tizimim", {
+          body: `${task.title}${task.project ? ` · ${task.project}` : ""}`,
+          icon: "/mening-tizimim-icon.png",
+        });
+        sessionStorage.setItem(seenKey, "1");
+      });
+    };
+
+    check();
+    const timer = window.setInterval(check, 60_000);
+    return () => window.clearInterval(timer);
+  }, [data.tasks, ready]);
 
   const value = useMemo<DataContextValue>(() => ({
     data,
     ready,
+    syncStatus,
     addProject: (item) => setData((prev) => ({ ...prev, projects: [item, ...prev.projects] })),
     updateProject: (item) => setData((prev) => ({ ...prev, projects: prev.projects.map((p) => p.id === item.id ? item : p) })),
     removeProject: (id) => setData((prev) => ({ ...prev, projects: prev.projects.filter((p) => p.id !== id) })),
@@ -59,8 +192,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     removeContract: (id) => setData((prev) => ({ ...prev, contracts: prev.contracts.filter((p) => p.id !== id) })),
     addTransaction: (item) => setData((prev) => ({ ...prev, transactions: [item, ...prev.transactions] })),
     removeTransaction: (id) => setData((prev) => ({ ...prev, transactions: prev.transactions.filter((p) => p.id !== id) })),
+    addTask: (item) => setData((prev) => ({ ...prev, tasks: [item, ...prev.tasks] })),
+    updateTask: (item) => setData((prev) => ({ ...prev, tasks: prev.tasks.map((t) => t.id === item.id ? item : t) })),
+    removeTask: (id) => setData((prev) => ({ ...prev, tasks: prev.tasks.filter((t) => t.id !== id) })),
+    toggleTask: (id) => setData((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((task) => task.id === id
+        ? {
+            ...task,
+            status: task.status === "done" ? "todo" : "done",
+            completedAt: task.status === "done" ? undefined : new Date().toISOString(),
+          }
+        : task),
+    })),
+    replaceData: (next) => setData(normalizeData(next)),
     resetDemo: () => setData(seedData),
-  }), [data, ready]);
+  }), [data, ready, syncStatus]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }

@@ -353,3 +353,142 @@ button.dangerButton, .dangerButton { color: #cf4b57 !important; background: #fff
   .calendarGrid > div { min-height: 52px; }
   .settingsCard { align-items: flex-start; flex-direction: column; }
 }
+
+/* v0.3 — auth, cloud sync, tasks and live calendar */
+.systemLoader { min-height: 100vh; display: grid; place-items: center; align-content: center; gap: 10px; background: radial-gradient(circle at 50% 25%, #eef6ff, #f7f9fc 42%, #f5f7fb 75%); color: var(--navy); }
+.systemLoader img { border-radius: 16px; box-shadow: 0 14px 35px rgba(12,103,253,.14); }
+.systemLoader strong { font-size: 14px; margin-top: 4px; }
+.systemLoader span { font-size: 9px; color: var(--muted); }
+.workspaceMeta { min-width: 0; }
+.workspaceMeta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
+.workspaceLive.syncError { background: #fff0f2; color: #c44d5c !important; }
+.sidebarLogout { cursor: pointer; }
+
+.notificationWrap { position: relative; }
+.notificationPanel { position: absolute; top: 47px; right: 0; width: min(350px, calc(100vw - 30px)); background: white; border: 1px solid var(--line); border-radius: 15px; box-shadow: 0 20px 60px rgba(16,35,68,.16); padding: 8px; z-index: 60; }
+.notificationHead { display: flex; align-items: center; justify-content: space-between; padding: 10px 10px 11px; border-bottom: 1px solid #eef2f7; color: var(--blue); }
+.notificationHead strong, .notificationHead span { display: block; }
+.notificationHead strong { font-size: 10px; color: var(--navy); }
+.notificationHead span { margin-top: 2px; font-size: 7.5px; color: var(--muted); }
+.notificationItem { display: grid; grid-template-columns: 23px 1fr; gap: 8px; align-items: start; padding: 11px 9px; border-radius: 10px; color: var(--blue); }
+.notificationItem:hover { background: #f7faff; }
+.notificationItem strong, .notificationItem small { display: block; }
+.notificationItem strong { font-size: 8.5px; color: #344258; line-height: 1.45; }
+.notificationItem small { font-size: 7px; color: #8a96a8; margin-top: 3px; }
+.notificationEmpty { padding: 22px 10px; text-align: center; font-size: 8px; color: var(--muted); }
+
+.loginPage { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(420px, .85fr); background: white; }
+.loginVisual { min-height: 100vh; padding: clamp(34px, 5vw, 72px); display: flex; flex-direction: column; position: relative; overflow: hidden; background: linear-gradient(145deg, #f5f9ff 0%, #edf5ff 40%, #f8fbff 100%); }
+.loginVisual::before { content: ""; width: 520px; height: 520px; border-radius: 50%; position: absolute; right: -180px; top: -170px; background: radial-gradient(circle, rgba(12,103,253,.16), rgba(12,103,253,0) 68%); }
+.loginVisual::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(12,103,253,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(12,103,253,.035) 1px, transparent 1px); background-size: 36px 36px; mask-image: linear-gradient(to bottom, transparent, black 20%, black 75%, transparent); pointer-events: none; }
+.loginBrand, .loginHeroCopy, .loginMetrics { position: relative; z-index: 1; }
+.loginBrand img { width: 205px; height: auto; }
+.loginHeroCopy { margin: auto 0; max-width: 700px; padding: 55px 0; }
+.loginEyebrow { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; border-radius: 99px; background: rgba(255,255,255,.75); color: var(--blue); border: 1px solid rgba(12,103,253,.12); font-size: 9px; font-weight: 600; }
+.loginHeroCopy h1 { max-width: 690px; margin-top: 20px; font-size: clamp(38px, 5vw, 68px); line-height: 1.06; letter-spacing: -.055em; }
+.loginHeroCopy p { max-width: 610px; margin: 18px 0 0; color: #66758b; font-size: 13px; line-height: 1.75; }
+.loginMetrics { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 620px; border-top: 1px solid rgba(9,23,53,.1); padding-top: 20px; gap: 20px; }
+.loginMetrics strong, .loginMetrics span { display: block; }
+.loginMetrics strong { color: var(--navy); font-size: 20px; letter-spacing: -.04em; }
+.loginMetrics span { margin-top: 4px; color: #7d899b; font-size: 8px; }
+.loginFormSide { display: grid; place-items: center; padding: 32px; background: #fff; }
+.loginCard { width: min(430px, 100%); }
+.loginIcon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: #edf5ff; color: var(--blue); margin-bottom: 18px; }
+.loginCard h2 { margin: 0; font-size: 24px; letter-spacing: -.035em; color: var(--navy); }
+.loginIntro { color: var(--muted); font-size: 9px; line-height: 1.7; margin: 8px 0 20px; }
+.loginIntro code { background: #f1f4f8; padding: 2px 5px; border-radius: 5px; color: #536176; }
+.loginTabs { display: grid; grid-template-columns: 1fr 1fr; background: #f5f7fb; padding: 4px; border-radius: 11px; margin-bottom: 18px; }
+.loginTabs button { min-height: 35px; border: 0; background: transparent; border-radius: 8px; color: #7e8a9d; font-size: 9px; font-weight: 600; }
+.loginTabs button.selected { color: var(--blue); background: white; box-shadow: 0 4px 13px rgba(24,48,86,.08); }
+.loginForm { display: flex; flex-direction: column; gap: 13px; }
+.loginField { display: flex; flex-direction: column; gap: 6px; }
+.loginField > span { color: #59677c; font-size: 8px; font-weight: 600; }
+.loginField > div { height: 45px; display: flex; align-items: center; gap: 9px; border: 1px solid #dde5ef; border-radius: 11px; padding: 0 12px; background: #fbfcfe; color: #96a1b2; }
+.loginField > div:focus-within { border-color: #83b4ff; box-shadow: 0 0 0 3px rgba(12,103,253,.08); background: white; }
+.loginField input { border: 0; outline: 0; background: transparent; min-width: 0; flex: 1; font-size: 10px; color: var(--text); }
+.loginField button { width: 28px; height: 28px; border: 0; background: transparent; display: grid; place-items: center; color: #8f9bad; padding: 0; }
+.loginSubmit { width: 100%; justify-content: center; margin-top: 4px; min-height: 45px; text-decoration: none; }
+.loginSubmit:disabled { opacity: .65; cursor: wait; }
+.loginHint { margin-top: 16px; padding: 11px; border-radius: 10px; background: #f8fafd; color: #8490a2; font-size: 7.5px; line-height: 1.6; }
+.loginMessage { padding: 10px 11px; border-radius: 9px; font-size: 8px; line-height: 1.5; }
+.loginMessage.error { color: #b4404d; background: #fff0f2; border: 1px solid #f6d9dd; }
+.loginMessage.success { color: #167a56; background: #eaf8f2; border: 1px solid #cfeee1; }
+
+.taskStats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+.taskStats > div { min-height: 82px; background: white; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.taskStats span, .taskStats strong { display: block; }
+.taskStats span { font-size: 8px; color: var(--muted); }
+.taskStats strong { margin-top: 5px; font-size: 19px; color: var(--navy); }
+.taskStats .dangerStat { border-color: #f3dce0; background: #fffafb; }
+.taskStats .dangerStat strong { color: #c94d5a; }
+.taskToolbar { padding: 10px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.taskToolbar .tableSearch { flex: 1; }
+.reminderButton { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.taskBoard { display: flex; flex-direction: column; gap: 9px; }
+.taskCard { background: white; border: 1px solid var(--line); border-radius: 14px; display: grid; grid-template-columns: 38px 1fr auto; gap: 11px; align-items: center; padding: 14px; box-shadow: 0 7px 22px rgba(19,42,82,.02); }
+.taskCard.taskDone { opacity: .68; background: #fbfcfd; }
+.taskToggle { width: 34px; height: 34px; border: 0; background: #f5f8fc; border-radius: 10px; color: #a6b0bf; display: grid; place-items: center; padding: 0; }
+.taskToggle.checked { color: #17845d; background: #eaf8f2; }
+.taskTitleLine { display: flex; align-items: center; gap: 8px; }
+.taskTitleLine strong { color: #2e3d54; font-size: 10px; line-height: 1.5; }
+.taskDone .taskTitleLine strong { text-decoration: line-through; color: #8290a3; }
+.priorityBadge { font-size: 6.5px; font-weight: 600; border-radius: 99px; padding: 4px 6px; white-space: nowrap; }
+.priorityBadge.low { color: #547089; background: #f0f4f7; }
+.priorityBadge.medium { color: #9c6d1b; background: #fff5df; }
+.priorityBadge.high { color: #b7424f; background: #fff0f2; }
+.taskCardBody > p { margin: 5px 0 0; color: #8591a3; font-size: 7.8px; line-height: 1.55; }
+.taskMetaLine { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 9px; }
+.taskMetaLine > span:not(.status) { display: inline-flex; align-items: center; gap: 5px; color: #7c899d; font-size: 7px; }
+.taskMetaLine .overdueText { color: #c34b57 !important; font-weight: 600; }
+.taskActions { display: flex; gap: 6px; }
+.taskActions button { width: 31px; height: 31px; display: grid; place-items: center; border: 1px solid #e5ebf3; background: white; color: #758297; border-radius: 8px; padding: 0; }
+
+.calendarV3 { max-width: none; }
+.calendarNav { display: flex !important; gap: 5px !important; }
+.calendarNav button { min-height: 31px; min-width: 31px; border: 1px solid #e2e8f0; background: white; color: #637087; border-radius: 8px; display: grid; place-items: center; padding: 0 9px; font-size: 8px; }
+.calendarGridV3 > div { min-height: 112px; padding: 7px; }
+.calendarDayNumber { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 7px; font-size: 8px; }
+.calendarGridV3 .todayDay .calendarDayNumber { color: white; background: var(--blue); }
+.calendarEvents { display: flex; flex-direction: column; gap: 3px; margin-top: 5px; }
+.calendarEvent { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-radius: 5px; padding: 4px 5px; font-size: 6.3px; font-weight: 500; }
+.calendarEvent.task { color: #215fb0; background: #edf5ff; }
+.calendarEvent.project { color: #624bc4; background: #f1efff; }
+.calendarEvent.contract { color: #9a6913; background: #fff5df; }
+.calendarEvents small { font-size: 6px; color: #8f9bad; padding-left: 4px; }
+.calendarLegend { display: flex; flex-wrap: wrap; gap: 15px; padding: 11px 3px 0; color: #7e899b; font-size: 7px; }
+.calendarLegend span { display: inline-flex; gap: 6px; align-items: center; }
+.calendarLegend i { width: 7px; height: 7px; border-radius: 3px; }
+.calendarLegend i.task { background: #7eaffb; }.calendarLegend i.project { background: #9785e8; }.calendarLegend i.contract { background: #edbd62; }
+
+@media (max-width: 920px) {
+  .loginPage { grid-template-columns: 1fr; }
+  .loginVisual { min-height: auto; padding: 28px; }
+  .loginHeroCopy { padding: 65px 0 50px; }
+  .loginHeroCopy h1 { font-size: clamp(34px, 8vw, 54px); }
+  .loginFormSide { padding: 45px 24px 60px; }
+  .taskToolbar { align-items: stretch; flex-direction: column; }
+  .taskToolbar .tableSearch { width: 100%; max-width: none; }
+  .reminderButton { justify-content: center; }
+}
+
+@media (max-width: 720px) {
+  .taskStats { grid-template-columns: repeat(2, 1fr); }
+  .taskCard { grid-template-columns: 34px 1fr; }
+  .taskActions { grid-column: 2; }
+  .calendarCard { overflow-x: auto; }
+  .calendarWeek, .calendarGrid { min-width: 780px; }
+  .loginMetrics { gap: 10px; }
+  .loginMetrics strong { font-size: 16px; }
+}
+
+@media (max-width: 500px) {
+  .loginVisual { padding: 22px; }
+  .loginBrand img { width: 170px; }
+  .loginHeroCopy { padding: 50px 0 40px; }
+  .loginHeroCopy p { font-size: 10px; }
+  .loginMetrics { grid-template-columns: 1fr; }
+  .loginMetrics div { display: flex; align-items: baseline; gap: 8px; }
+  .loginFormSide { padding: 36px 18px 50px; }
+  .loginCard h2 { font-size: 21px; }
+  .taskTitleLine { align-items: flex-start; flex-direction: column; }
+}

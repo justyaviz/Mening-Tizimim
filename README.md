@@ -1,80 +1,70 @@
-# Mening Tizimim — v0.2
+# Mening Tizimim v0.3
 
-Personal business operating system for managing projects, clients, contracts, finance and daily work.
+Shaxsiy professional boshqaruv platformasi: loyihalar, mijozlar, shartnomalar, moliya, vazifalar va deadline’lar bitta joyda.
 
-## v0.2 includes
+## v0.3 da nima ishlaydi
 
-- Real App Router navigation for every sidebar item
-- Dashboard connected to shared local data
-- Projects module: search, filter, create, edit, delete, progress, deadline, pricing
-- Clients CRM: search, filter, create, edit, delete, contact details
-- Contracts module: create, edit, delete, status, dates, billing and payment day
-- Finance module: income/expense entries, filters, UZS/USD tracking and cash-flow summary
-- Local persistence with `localStorage`
-- Analytics preview using live local data
-- Tasks, Calendar, Partners and Settings route shells ready for v0.3
-- Responsive desktop/mobile layout
-- Mening Tizimim blue/navy brand system
+- Dashboard
+- Projects CRUD
+- Clients CRM CRUD
+- Contracts CRUD
+- Finance CRUD
+- Tasks CRUD + status + priority + deadline + reminder
+- Live Calendar: task + project deadline + contract deadline
+- Supabase email/password Auth
+- Supabase cloud database + RLS
+- Local backup/fallback
+- Browser reminder notifications (ilova ochiq turganda)
+- JSON backup export
+- Responsive UI
 
-> v0.2 is still frontend-first. Data is saved in the current browser via localStorage. Authentication and a real cloud database are planned for a later version.
-
-## Stack
-
-- Next.js 15
-- React 19
-- TypeScript
-- Lucide icons
-- Plain CSS
-
-## Run locally
+## Ishga tushirish
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Brauzer: `http://localhost:3000`
 
-## Quality checks
+## Supabase ulash
 
-```bash
-npm run typecheck
-npm run build
+Supabase ulanmasa loyiha avtomatik **Local demo** rejimida ishlaydi.
+
+1. Supabase’da yangi project yarating.
+2. `supabase/schema.sql` faylini Supabase SQL Editor ichida ishga tushiring.
+3. `.env.example` dan `.env.local` yarating:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_ANON_KEY
 ```
 
-## Push to GitHub
+4. Dev serverni qayta ishga tushiring.
+5. `/login` orqali birinchi admin account yarating.
+6. Shaxsiy tizim bo‘lsa, account yaratilgach Supabase Auth settings ichida yangi user signup’larini o‘chirib qo‘yish tavsiya etiladi.
+
+## Database arxitekturasi
+
+v0.3 cloud migratsiyani sodda va xavfsiz qilish uchun user workspace’ni bitta `workspace_data` qatorida JSONB ko‘rinishda saqlaydi. `user_id` auth user bilan bog‘langan va RLS orqali faqat o‘sha userga ruxsat beriladi.
+
+Keyingi versiyada kerak bo‘lsa Projects, Tasks, Finance va Clients alohida relational jadvallarga ajratiladi.
+
+## Reminder haqida
+
+v0.3 browser Notification API’dan foydalanadi. `Vazifalar` sahifasida **Reminder yoqish** tugmasini bosing. Reminder ilova brauzerda ochiq turgan paytda tekshiriladi. Ilova yopiq bo‘lganda server push/Telegram reminder v0.4 bosqichiga qoldirilgan.
+
+## GitHub
 
 ```bash
 git init
 git add .
-git commit -m "Mening Tizimim v0.2"
+git commit -m "Mening Tizimim v0.3"
 git branch -M main
 git remote add origin YOUR_GITHUB_REPOSITORY_URL
 git push -u origin main
 ```
 
-If v0.1 is already in the repository:
+## Vercel
 
-```bash
-git add .
-git commit -m "Upgrade Mening Tizimim to v0.2"
-git push
-```
-
-## Suggested v0.3
-
-1. Supabase/PostgreSQL database
-2. Authentication and private admin account
-3. Full Tasks CRUD + reminders
-4. Calendar events and deadlines
-5. Partners/team cost tracking
-6. Project detail page with activity history
-7. Contract file upload
-8. Monthly P&L and profitability analytics
-
-## Brand
-
-- Primary: `#0C67FD`
-- Dark navy: `#091735`
-- Secondary blue: `#098FFC`
-- Font direction: Poppins
+Vercel Project Settings → Environment Variables ichiga Supabase URL va anon key’ni ham kiriting, so‘ng redeploy qiling.

@@ -15,17 +15,10 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 import { useAppData } from "@/components/data-provider";
-import { formatMoney, shortMoney } from "@/lib/data";
-
-const tasks = [
-  { title: "Kontent va reklama rejalarini tekshirish", time: "11:30", project: "SMM" },
-  { title: "Yangi loyiha bo‘yicha kelishuvni yakunlash", time: "14:00", project: "Sales" },
-  { title: "Web loyiha bosh sahifasini yakunlash", time: "17:00", project: "Web" },
-  { title: "Kunlik xarajatlarni kiritish", time: "19:30", project: "Moliya" },
-];
+import { formatMoney, formatTaskDate, shortMoney } from "@/lib/data";
 
 export default function Home() {
-  const { data } = useAppData();
+  const { data, toggleTask } = useAppData();
 
   const stats = useMemo(() => {
     const activeProjects = data.projects.filter((p) => p.status === "active").length;
@@ -39,14 +32,16 @@ export default function Home() {
   const currentDate = new Intl.DateTimeFormat("uz-UZ", { weekday: "long", day: "2-digit", month: "long" }).format(new Date()).toUpperCase();
   const active = data.projects.filter((p) => p.status === "active").slice(0, 3);
   const contracts = [...data.contracts].sort((a, b) => a.endDate.localeCompare(b.endDate)).slice(0, 2);
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const tasks = [...data.tasks].filter((task) => task.status !== "done" && task.dueAt.slice(0, 10) <= todayKey).sort((a, b) => a.dueAt.localeCompare(b.dueAt)).slice(0, 4);
 
   const categoryTotals = useMemo(() => {
     const items = data.transactions.filter((t) => t.type === "income" && t.currency === "UZS");
     const total = items.reduce((s, t) => s + t.amount, 0) || 1;
-    return Object.entries(items.reduce<Record<string, number>>((acc, t) => {
+    return (Object.entries(items.reduce<Record<string, number>>((acc, t) => {
       acc[t.category] = (acc[t.category] || 0) + t.amount;
       return acc;
-    }, {})).map(([label, value]) => ({ label, value, percent: Math.round((value / total) * 100) })).slice(0, 4);
+    }, {})) as Array<[string, number]>).map(([label, value]) => ({ label, value, percent: Math.round((value / total) * 100) })).slice(0, 4);
   }, [data.transactions]);
 
   return (
@@ -62,7 +57,7 @@ export default function Home() {
 
       <section className="statsGrid">
         <StatCard icon={FolderKanban} label="Aktiv loyihalar" value={String(stats.activeProjects)} hint="ta loyiha" trend={`${data.projects.length} jami`} />
-        <StatCard icon={CircleDollarSign} label="Jami daromad" value={shortMoney(stats.income)} hint="so‘m" trend="v0.2 data" />
+        <StatCard icon={CircleDollarSign} label="Jami daromad" value={shortMoney(stats.income)} hint="so‘m" trend="cloud + local" />
         <StatCard icon={WalletCards} label="Jami xarajat" value={shortMoney(stats.expense)} hint="so‘m" trend={stats.income ? `${Math.round((stats.expense / stats.income) * 100)}% daromaddan` : "0%"} />
         <StatCard icon={BriefcaseBusiness} label="Aktiv shartnomalar" value={String(data.contracts.filter((c) => c.status === "active" || c.status === "ending").length)} hint={stats.expectedUsd ? `${formatMoney(stats.expectedUsd, "USD")} qiymat` : "nazoratda"} trend="shartnomalar" />
       </section>
@@ -91,16 +86,17 @@ export default function Home() {
           <CardHeader title="Bugungi vazifalar" subtitle="Tezkor kunlik ro‘yxat" href="/tasks" action="Vazifalar" />
           <div className="taskList">
             {tasks.map((task, i) => (
-              <label className="taskRow" key={task.title}>
-                <input type="checkbox" />
+              <label className="taskRow" key={task.id}>
+                <input type="checkbox" checked={task.status === "done"} onChange={() => toggleTask(task.id)} />
                 <span className="fakeCheck" />
                 <span className="taskContent">
                   <strong>{task.title}</strong>
-                  <small><b>{task.time}</b> · {task.project}</small>
+                  <small><b>{formatTaskDate(task.dueAt)}</b> · {task.project || "Umumiy"}</small>
                 </span>
                 <span className={`priority priority${i + 1}`} />
               </label>
             ))}
+            {tasks.length === 0 && <div className="inlineEmpty">Bugunga kechikkan yoki rejalashtirilgan vazifa yo‘q.</div>}
           </div>
           <Link href="/tasks" className="addTask"><ClipboardCheck size={16} /> Vazifalarga o‘tish</Link>
         </div>
@@ -137,7 +133,7 @@ export default function Home() {
           })}
           <div className="miniInsight">
             <FileSignature size={19} />
-            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.2 da shartnomalarni qo‘shish, tahrirlash va o‘chirish ishlaydi.</span></div>
+            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.3 da barcha ma’lumot cloud bazaga avtomatik sinxronlanadi.</span></div>
           </div>
         </div>
       </section>

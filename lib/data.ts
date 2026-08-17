@@ -3,6 +3,8 @@ export type ClientStatus = "active" | "lead" | "inactive";
 export type ContractStatus = "active" | "ending" | "draft" | "completed";
 export type TransactionType = "income" | "expense";
 export type Currency = "UZS" | "USD";
+export type TaskStatus = "todo" | "doing" | "done";
+export type TaskPriority = "low" | "medium" | "high";
 
 export type Project = {
   id: string;
@@ -58,11 +60,25 @@ export type Transaction = {
   note: string;
 };
 
+export type Task = {
+  id: string;
+  title: string;
+  project: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  dueAt: string;
+  reminderAt: string;
+  description: string;
+  createdAt: string;
+  completedAt?: string;
+};
+
 export type AppData = {
   projects: Project[];
   clients: Client[];
   contracts: Contract[];
   transactions: Transaction[];
+  tasks: Task[];
 };
 
 export const seedData: AppData = {
@@ -234,7 +250,64 @@ export const seedData: AppData = {
       note: "Qo'shimcha xizmat.",
     },
   ],
+  tasks: [
+    {
+      id: "task-1",
+      title: "Start Education kontent va target rejasini tekshirish",
+      project: "Start Education",
+      status: "todo",
+      priority: "high",
+      dueAt: "2026-08-17T17:00",
+      reminderAt: "2026-08-17T16:30",
+      description: "Bugungi kampaniyalar va kontent chiqishlarini yakuniy tekshirish.",
+      createdAt: "2026-08-17T09:00:00",
+    },
+    {
+      id: "task-2",
+      title: "Web loyiha bosh sahifasini yakunlash",
+      project: "Web loyiha #01",
+      status: "doing",
+      priority: "high",
+      dueAt: "2026-08-17T19:00",
+      reminderAt: "2026-08-17T18:30",
+      description: "Desktop va mobile holatlarini tekshirib mijozga preview yuborish.",
+      createdAt: "2026-08-16T18:00:00",
+    },
+    {
+      id: "task-3",
+      title: "Kunlik xarajatlarni Moliya bo‘limiga kiritish",
+      project: "General",
+      status: "todo",
+      priority: "medium",
+      dueAt: "2026-08-17T21:00",
+      reminderAt: "2026-08-17T20:30",
+      description: "Bugungi reklama, transport va servis xarajatlarini yozish.",
+      createdAt: "2026-08-17T10:00:00",
+    },
+    {
+      id: "task-4",
+      title: "aloo haftalik hisobotini tayyorlash",
+      project: "aloo",
+      status: "todo",
+      priority: "medium",
+      dueAt: "2026-08-18T14:00",
+      reminderAt: "2026-08-18T12:00",
+      description: "Kontent va reklama natijalarini birlashtirish.",
+      createdAt: "2026-08-17T10:30:00",
+    },
+  ],
 };
+
+export function normalizeData(raw: Partial<AppData> | null | undefined): AppData {
+  const safe = raw && typeof raw === "object" ? raw : {};
+  return {
+    projects: Array.isArray(safe.projects) ? safe.projects : seedData.projects,
+    clients: Array.isArray(safe.clients) ? safe.clients : seedData.clients,
+    contracts: Array.isArray(safe.contracts) ? safe.contracts : seedData.contracts,
+    transactions: Array.isArray(safe.transactions) ? safe.transactions : seedData.transactions,
+    tasks: Array.isArray(safe.tasks) ? safe.tasks : seedData.tasks,
+  };
+}
 
 export function makeId(prefix = "id") {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -252,4 +325,26 @@ export function shortMoney(amount: number) {
   if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)} mln`;
   if (amount >= 1_000) return `${Math.round(amount / 1_000)} ming`;
   return `${amount}`;
+}
+
+export function formatTaskDate(value: string) {
+  if (!value) return "Muddat yo‘q";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("uz-UZ", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+export function dateKey(value: string) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value.slice(0, 10);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
