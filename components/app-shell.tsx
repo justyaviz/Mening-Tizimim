@@ -16,7 +16,6 @@ import {
   Handshake,
   LayoutDashboard,
   Lightbulb,
-  LogOut,
   Menu,
   NotebookTabs,
   ReceiptText,
@@ -28,7 +27,6 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAuth } from "@/components/auth-provider";
 import { useAppData } from "@/components/data-provider";
 import { formatTaskDate } from "@/lib/data";
 
@@ -58,14 +56,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const searchRef = useRef<HTMLInputElement | null>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { configured, loading, user, signOut } = useAuth();
-  const { data, ready, syncStatus } = useAppData();
+  const { data, ready, syncStatus, syncError } = useAppData();
 
-  useEffect(() => {
-    if (!configured || loading) return;
-    if (!user && pathname !== "/login") router.replace("/login");
-    if (user && pathname === "/login") router.replace("/");
-  }, [configured, loading, user, pathname, router]);
 
   useEffect(() => {
     function hotkey(e: KeyboardEvent) {
@@ -114,26 +106,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return results.slice(0, 9);
   }, [data, searchQuery]);
 
-  if (pathname === "/login") return <>{children}</>;
-
-  if (configured && (loading || !user || !ready)) {
+  if (!ready) {
     return (
       <div className="systemLoader">
         <Image src="/mening-tizimim-icon.png" alt="Mening Tizimim" width={58} height={58} />
         <strong>Mening Tizimim</strong>
-        <span>{!user && !loading ? "Kirish sahifasiga yo‘naltirilmoqda..." : "Tizim yuklanmoqda..."}</span>
+        <span>Railway PostgreSQL bazasidan ma’lumotlar yuklanmoqda...</span>
       </div>
     );
   }
 
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
-  const displayEmail = user?.email || "Local workspace";
-  const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "YT";
-
-  async function handleSignOut() {
-    await signOut();
-    router.replace("/login");
-  }
+  const displayEmail = "Railway PostgreSQL";
+  const initials = "YT";
 
   function chooseResult(result: SearchResult) {
     setSearchQuery("");
@@ -152,8 +137,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <div className="workspaceBadge">
           <div className="avatar">{initials}</div>
-          <div className="workspaceMeta"><strong>Mening workspace</strong><span title={displayEmail}>{configured ? displayEmail : "Shaxsiy local tizim"}</span></div>
-          <span className={`workspaceLive ${syncStatus === "error" ? "syncError" : ""}`}>{configured ? (syncStatus === "synced" ? "CLOUD" : syncStatus.toUpperCase()) : "LOCAL"}</span>
+          <div className="workspaceMeta"><strong>Mening workspace</strong><span title={displayEmail}>{displayEmail}</span></div>
+          <span className={`workspaceLive ${syncStatus === "error" ? "syncError" : ""}`}>{syncStatus === "synced" ? "DB" : syncStatus.toUpperCase()}</span>
         </div>
 
         <nav className="navList">
@@ -165,8 +150,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="sidebarBottom">
           <Link href="/analytics" className={`navItem ${isActive("/analytics") ? "active" : ""}`}><BarChart3 size={19} /><span>Analitika</span></Link>
           <Link href="/settings" className={`navItem ${isActive("/settings") ? "active" : ""}`}><Settings size={19} /><span>Sozlamalar</span></Link>
-          {configured && user && <button className="navItem sidebarLogout" onClick={handleSignOut}><LogOut size={19} /><span>Chiqish</span></button>}
-          <div className="version">Mening Tizimim <b>v0.6</b></div>
+          <div className="version">Mening Tizimim <b>v0.9</b></div>
         </div>
       </aside>
 
@@ -203,9 +187,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
               )}
             </div>
-            <div className="profileMini"><div className="avatar small">{initials}</div><div className="profileText"><strong>Yaviz</strong><span>{configured ? "Cloud Admin" : "Local Admin"}</span></div></div>
+            <div className="profileMini"><div className="avatar small">{initials}</div><div className="profileText"><strong>Yaviz</strong><span>Database Admin</span></div></div>
           </div>
         </header>
+        {syncStatus === "error" && <div className="dbErrorBanner"><strong>Database bilan aloqa xatosi:</strong><span>{syncError || "Railway PostgreSQL ulanmagan yoki vaqtincha javob bermayapti."}</span></div>}
         {children}
       </section>
     </main>

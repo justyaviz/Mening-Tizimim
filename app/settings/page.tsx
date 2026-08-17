@@ -1,13 +1,11 @@
 "use client";
 
-import { Cloud, Download, RotateCcw, ShieldCheck, UserRound } from "lucide-react";
+import { Cloud, Database, Download, RefreshCw, ShieldCheck } from "lucide-react";
 import { useAppData } from "@/components/data-provider";
-import { useAuth } from "@/components/auth-provider";
 import { PageHeader } from "@/components/ui";
 
 export default function SettingsPage() {
-  const { data, resetDemo, syncStatus } = useAppData();
-  const { configured, user } = useAuth();
+  const { data, syncStatus, syncError, lastSyncedAt, reloadFromDatabase } = useAppData();
 
   function exportData() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -19,15 +17,17 @@ export default function SettingsPage() {
     URL.revokeObjectURL(url);
   }
 
+  const totalRecords = data.projects.length + data.clients.length + data.contracts.length + data.transactions.length + data.invoices.length + data.tasks.length + data.partners.length + data.workLogs.length + data.lessons.length + data.services.length + data.goals.length + data.interactions.length;
+
   return (
     <div className="pageWrap">
-      <PageHeader eyebrow="SYSTEM" title="Sozlamalar" subtitle="Cloud, xavfsizlik va ma’lumotlar holatini boshqaring." />
+      <PageHeader eyebrow="SYSTEM" title="Sozlamalar" subtitle="Railway PostgreSQL, xavfsizlik va backup holatini boshqaring." />
       <section className="settingsStack">
-        <article className="settingsCard cardLike"><div><Cloud size={19}/><div><strong>Ma’lumotlarni saqlash</strong><p>{configured ? "Supabase cloud baza faol. Har bir o‘zgarish avtomatik sinxronlanadi va local backup ham saqlanadi." : "Supabase env sozlanmagan. Tizim localStorage demo rejimida ishlayapti."}</p></div></div><span className={`status ${syncStatus === "error" ? "warning" : configured ? "success" : "info"}`}>{syncStatus}</span></article>
-        <article className="settingsCard cardLike"><div><UserRound size={19}/><div><strong>Admin hisob</strong><p>{configured ? (user?.email || "Auth session yuklanmoqda") : "Local Admin · login o‘chiq"}</p></div></div><span className="status neutral">{configured ? "Supabase Auth" : "Demo"}</span></article>
-        <article className="settingsCard cardLike"><div><ShieldCheck size={19}/><div><strong>Maxfiylik</strong><p>Supabase RLS policy har bir userga faqat o‘z workspace ma’lumotini o‘qish va yangilashga ruxsat beradi.</p></div></div><span className="status success">RLS ready</span></article>
-        <article className="settingsCard cardLike"><div><Download size={19}/><div><strong>Backup yuklab olish</strong><p>Barcha loyiha, CRM, moliya, hisoblar, debitorlar, work log, dars, xizmat va maqsadlarni JSON backup sifatida saqlang.</p></div></div><button className="secondaryButton" onClick={exportData}>Yuklab olish</button></article>
-        <article className="settingsCard cardLike"><div><RotateCcw size={19}/><div><strong>Demo ma’lumotlarni tiklash</strong><p>Hozirgi workspace ma’lumotlarini boshlang‘ich v0.6 demo holatiga qaytaradi.</p></div></div><button className="secondaryButton" onClick={() => window.confirm("Demo ma’lumotlarni tiklaysizmi?") && resetDemo()}>Tiklash</button></article>
+        <article className="settingsCard cardLike"><div><Database size={19}/><div><strong>Asosiy ma’lumotlar bazasi</strong><p>Barcha loyiha, mijoz, shartnoma, moliya, to‘lov, vazifa va boshqa ma’lumotlar Railway PostgreSQL ichidagi <code>workspace_data</code> jadvalida saqlanadi. Demo va localStorage ishlatilmaydi.</p></div></div><span className={`status ${syncStatus === "error" ? "warning" : syncStatus === "synced" ? "success" : "info"}`}>{syncStatus}</span></article>
+        <article className="settingsCard cardLike"><div><Cloud size={19}/><div><strong>Avtomatik sinxronizatsiya</strong><p>{syncError ? `Xato: ${syncError}` : lastSyncedAt ? `Oxirgi saqlash: ${new Date(lastSyncedAt).toLocaleString("uz-UZ")}` : "Database bilan birinchi sinxronizatsiya kutilmoqda."}</p></div></div><button className="secondaryButton" onClick={() => void reloadFromDatabase()}><RefreshCw size={15}/> Qayta yuklash</button></article>
+        <article className="settingsCard cardLike"><div><ShieldCheck size={19}/><div><strong>Database xavfsizligi</strong><p><code>DATABASE_URL</code> faqat Next.js server tomonida ishlatiladi va brauzerga yuborilmaydi. Railway private connection’dan foydalanish tavsiya etiladi.</p></div></div><span className="status success">Server only</span></article>
+        <article className="settingsCard cardLike"><div><Database size={19}/><div><strong>Saqlangan obyektlar</strong><p>Hozir workspace ichida jami <b>{totalRecords}</b> ta yozuv bor.</p></div></div><span className="status neutral">PostgreSQL</span></article>
+        <article className="settingsCard cardLike"><div><Download size={19}/><div><strong>Backup yuklab olish</strong><p>Database’dagi barcha workspace ma’lumotlarini JSON nusxa sifatida kompyuterga saqlaydi.</p></div></div><button className="secondaryButton" onClick={exportData}>Yuklab olish</button></article>
       </section>
     </div>
   );

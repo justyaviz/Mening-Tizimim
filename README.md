@@ -1,35 +1,27 @@
-# Mening Tizimim v0.8
+# Mening Tizimim v0.9
 
-Shaxsiy biznes boshqaruv platformasi.
+Shaxsiy biznes operatsion tizimi. v0.9 dan boshlab barcha ish ma’lumotlari Railway PostgreSQL bazasida saqlanadi. Demo seed va localStorage saqlash olib tashlangan.
 
-## v0.8 — Professional Contract Builder
+## Railway setup
 
-- Marketing xizmatlari bo‘yicha to‘liq 19 bo‘limli asosiy shartnoma.
-- Tanlangan xizmatlar asosida dinamik xizmat bandlari.
-- 1-ilova: Loyiha bo‘yicha maxsus shartlar.
-- 2-ilova: Taraflarning to‘liq rekvizitlari.
-- Kontent hajmi, syomka, ish tartibi, target reklama va eksklyuzivlik maydonlari.
-- Har bir PDF sahifasida shartnoma raqami, Document ID va sahifa raqami.
-- A4 firma blankasi uchun xavfsiz header/footer zonalari.
-- v0.7 localStorage ma’lumotlari avtomatik migratsiya qilinadi.
+1. Railway project ichida Postgres service yarating/ulang.
+2. `Mening-Tizimim` service → Variables ichida `DATABASE_URL` ni Postgres service `DATABASE_URL` qiymatiga reference qiling.
+3. Deploy qiling. API birinchi ishga tushganda `workspace_data` jadvalini avtomatik yaratadi.
+4. Health check: `/api/health/db` ochilganda `{ ok: true }` qaytishi kerak.
 
-## Ishga tushirish
+Qo‘lda schema kerak bo‘lsa: `database/schema.sql`.
+
+## Local development
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
-## Production build
+## Database architecture
 
-```bash
-npm run build
-```
-
-## GitHub
-
-```bash
-git add .
-git commit -m "Upgrade Mening Tizimim to v0.8"
-git push
-```
+- `workspace_data.workspace_key = main`
+- `payload` — barcha Projects, Clients, Contracts, Finance, Invoices, Tasks, Partners, Work Logs, Lessons, Services, Goals va Client Interactions uchun JSONB source of truth.
+- Har bir UI o‘zgarishi `/api/workspace` orqali PostgreSQL'ga avtomatik saqlanadi.
+- Demo fallback yo‘q. Database ishlamasa tizim `error` holatini ko‘rsatadi va ma’lumotni yashirincha localStorage'ga saqlamaydi.

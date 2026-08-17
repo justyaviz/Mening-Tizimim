@@ -1,5 +1,14 @@
 # Mening Tizimim Changelog
 
+## v0.9.0
+- Railway PostgreSQL yagona source of truth bo‘ldi.
+- Barcha demo seed ma’lumotlar olib tashlandi; yangi database bo‘sh holatda boshlanadi.
+- localStorage va Supabase workspace sync olib tashlandi.
+- `/api/workspace` GET/PUT server API qo‘shildi.
+- `/api/health/db` database health endpoint qo‘shildi.
+- `workspace_data` JSONB jadvali avtomatik yaratiladi.
+- Settings Railway DB holati va oxirgi sync vaqtini ko‘rsatadi.
+
 ## v0.8.3
 - PDF eksportidagi katta bo‘sh joylar tuzatildi.
 - Asosiy shartnoma bo‘limlari PDF yaratish vaqtida A4 sahifalarga avtomatik zich joylanadi.

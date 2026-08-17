@@ -2,30 +2,17 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { AppData, Client, ClientInteraction, Contract, Goal, Invoice, Lesson, Partner, Project, Service, Task, Transaction, WorkLog } from "@/lib/data";
-import { normalizeData, seedData } from "@/lib/data";
-import { getSupabaseClient } from "@/lib/supabase";
-import { useAuth } from "@/components/auth-provider";
+import { emptyData, normalizeData } from "@/lib/data";
 
-const STORAGE_KEY = "mening-tizimim-v0.8-data";
-const OLD_STORAGE_KEYS = ["mening-tizimim-v0.7-data", "mening-tizimim-v0.6-data", "mening-tizimim-v0.5-data", "mening-tizimim-v0.4-data", "mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
-
-function findLocalBackup(userId?: string) {
-  const keys = userId
-    ? [`${STORAGE_KEY}-${userId}`, STORAGE_KEY, ...OLD_STORAGE_KEYS.map((key) => `${key}-${userId}`), ...OLD_STORAGE_KEYS]
-    : [STORAGE_KEY, ...OLD_STORAGE_KEYS];
-  for (const key of keys) {
-    const value = localStorage.getItem(key);
-    if (value) return value;
-  }
-  return null;
-}
-
-export type SyncStatus = "local" | "loading" | "syncing" | "synced" | "error";
+export type SyncStatus = "loading" | "syncing" | "synced" | "error";
 
 type DataContextValue = {
   data: AppData;
   ready: boolean;
   syncStatus: SyncStatus;
+  lastSyncedAt: string | null;
+  syncError: string | null;
+  reloadFromDatabase: () => Promise<void>;
   addProject: (item: Project) => void;
   updateProject: (item: Project) => void;
   removeProject: (id: string) => void;
@@ -63,128 +50,77 @@ type DataContextValue = {
   updateInteraction: (item: ClientInteraction) => void;
   removeInteraction: (id: string) => void;
   replaceData: (next: AppData) => void;
-  resetDemo: () => void;
 };
 
 const DataContext = createContext<DataContextValue | null>(null);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  const { configured, user, loading: authLoading } = useAuth();
-  const [data, setData] = useState<AppData>(seedData);
+  const [data, setData] = useState<AppData>(emptyData);
   const [ready, setReady] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>(configured ? "loading" : "local");
-  const hydratedFor = useRef<string | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("loading");
+  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const hydratedSuccessfully = useRef(false);
+  const lastSavedJson = useRef(JSON.stringify(emptyData));
 
-  useEffect(() => {
-    if (authLoading) return;
-
-    let cancelled = false;
-
-    async function hydrate() {
-      if (!configured) {
-        try {
-          const saved = findLocalBackup();
-          if (saved) setData(normalizeData(JSON.parse(saved)));
-        } catch {
-          setData(seedData);
-        } finally {
-          hydratedFor.current = "local";
-          setReady(true);
-          setSyncStatus("local");
-        }
-        return;
-      }
-
-      if (!user) {
-        hydratedFor.current = null;
-        setReady(false);
-        setSyncStatus("loading");
-        return;
-      }
-
-      if (hydratedFor.current === user.id) return;
-      setReady(false);
-      setSyncStatus("loading");
-
-      const supabase = getSupabaseClient();
-      if (!supabase) return;
-
-      try {
-        const { data: row, error } = await supabase
-          .from("workspace_data")
-          .select("payload")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        if (error) throw error;
-        if (cancelled) return;
-
-        if (row?.payload) {
-          setData(normalizeData(row.payload as Partial<AppData>));
-        } else {
-          const local = findLocalBackup(user.id);
-          const initial = local ? normalizeData(JSON.parse(local)) : seedData;
-          setData(initial);
-          const { error: insertError } = await supabase.from("workspace_data").upsert({
-            user_id: user.id,
-            payload: initial,
-            updated_at: new Date().toISOString(),
-          });
-          if (insertError) throw insertError;
-        }
-
-        hydratedFor.current = user.id;
-        setReady(true);
-        setSyncStatus("synced");
-      } catch (error) {
-        console.error("Cloud hydrate failed", error);
-        if (cancelled) return;
-        try {
-          const saved = findLocalBackup(user.id);
-          setData(saved ? normalizeData(JSON.parse(saved)) : seedData);
-        } catch {
-          setData(seedData);
-        }
-        hydratedFor.current = user.id;
-        setReady(true);
-        setSyncStatus("error");
-      }
-    }
-
-    hydrate();
-    return () => { cancelled = true; };
-  }, [authLoading, configured, user]);
-
-  useEffect(() => {
-    if (!ready) return;
+  async function reloadFromDatabase() {
+    setSyncStatus("loading");
+    setSyncError(null);
     try {
-      const backupKey = configured && user ? `${STORAGE_KEY}-${user.id}` : STORAGE_KEY;
-      localStorage.setItem(backupKey, JSON.stringify(data));
-    } catch {
-      // local backup is best-effort
+      const response = await fetch("/api/workspace", { cache: "no-store" });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body?.error || "Database ma’lumotlarini yuklab bo‘lmadi.");
+      const next = normalizeData(body.payload);
+      const serialized = JSON.stringify(next);
+      lastSavedJson.current = serialized;
+      hydratedSuccessfully.current = true;
+      setData(next);
+      setLastSyncedAt(body.updatedAt || null);
+      setSyncStatus("synced");
+    } catch (error) {
+      hydratedSuccessfully.current = false;
+      setData(emptyData);
+      setSyncStatus("error");
+      setSyncError(error instanceof Error ? error.message : "Database bilan aloqa xatosi.");
+    } finally {
+      setReady(true);
     }
+  }
 
-    if (!configured || !user || hydratedFor.current !== user.id) return;
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
+  useEffect(() => {
+    void reloadFromDatabase();
+  }, []);
+
+  useEffect(() => {
+    if (!ready || !hydratedSuccessfully.current) return;
+    const serialized = JSON.stringify(data);
+    if (serialized === lastSavedJson.current) return;
 
     setSyncStatus("syncing");
+    setSyncError(null);
     const timer = window.setTimeout(async () => {
-      const { error } = await supabase.from("workspace_data").upsert({
-        user_id: user.id,
-        payload: data,
-        updated_at: new Date().toISOString(),
-      });
-      setSyncStatus(error ? "error" : "synced");
-      if (error) console.error("Cloud sync failed", error);
-    }, 650);
+      try {
+        const response = await fetch("/api/workspace", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: serialized,
+        });
+        const body = await response.json();
+        if (!response.ok) throw new Error(body?.error || "Databasega saqlashda xato.");
+        lastSavedJson.current = serialized;
+        setLastSyncedAt(body.updatedAt || new Date().toISOString());
+        setSyncStatus("synced");
+      } catch (error) {
+        setSyncStatus("error");
+        setSyncError(error instanceof Error ? error.message : "Databasega saqlashda xato.");
+      }
+    }, 450);
 
     return () => window.clearTimeout(timer);
-  }, [data, ready, configured, user]);
+  }, [data, ready]);
 
   useEffect(() => {
     if (!ready || typeof window === "undefined" || !("Notification" in window)) return;
-
     const check = () => {
       if (Notification.permission !== "granted") return;
       const now = Date.now();
@@ -202,16 +138,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         sessionStorage.setItem(seenKey, "1");
       });
     };
-
     check();
     const timer = window.setInterval(check, 60_000);
     return () => window.clearInterval(timer);
   }, [data.tasks, ready]);
 
   const value = useMemo<DataContextValue>(() => ({
-    data,
-    ready,
-    syncStatus,
+    data, ready, syncStatus, lastSyncedAt, syncError, reloadFromDatabase,
     addProject: (item) => setData((prev) => ({ ...prev, projects: [item, ...prev.projects] })),
     updateProject: (item) => setData((prev) => ({ ...prev, projects: prev.projects.map((p) => p.id === item.id ? item : p) })),
     removeProject: (id) => setData((prev) => ({ ...prev, projects: prev.projects.filter((p) => p.id !== id) })),
@@ -229,16 +162,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     addTask: (item) => setData((prev) => ({ ...prev, tasks: [item, ...prev.tasks] })),
     updateTask: (item) => setData((prev) => ({ ...prev, tasks: prev.tasks.map((t) => t.id === item.id ? item : t) })),
     removeTask: (id) => setData((prev) => ({ ...prev, tasks: prev.tasks.filter((t) => t.id !== id) })),
-    toggleTask: (id) => setData((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) => task.id === id
-        ? {
-            ...task,
-            status: task.status === "done" ? "todo" : "done",
-            completedAt: task.status === "done" ? undefined : new Date().toISOString(),
-          }
-        : task),
-    })),
+    toggleTask: (id) => setData((prev) => ({ ...prev, tasks: prev.tasks.map((task) => task.id === id ? { ...task, status: task.status === "done" ? "todo" : "done", completedAt: task.status === "done" ? undefined : new Date().toISOString() } : task) })),
     addPartner: (item) => setData((prev) => ({ ...prev, partners: [item, ...prev.partners] })),
     updatePartner: (item) => setData((prev) => ({ ...prev, partners: prev.partners.map((p) => p.id === item.id ? item : p) })),
     removePartner: (id) => setData((prev) => ({ ...prev, partners: prev.partners.filter((p) => p.id !== id) })),
@@ -258,8 +182,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     updateInteraction: (item) => setData((prev) => ({ ...prev, interactions: prev.interactions.map((p) => p.id === item.id ? item : p) })),
     removeInteraction: (id) => setData((prev) => ({ ...prev, interactions: prev.interactions.filter((p) => p.id !== id) })),
     replaceData: (next) => setData(normalizeData(next)),
-    resetDemo: () => setData(seedData),
-  }), [data, ready, syncStatus]);
+  }), [data, ready, syncStatus, lastSyncedAt, syncError]);
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }

@@ -927,3 +927,6 @@ button.dangerButton, .dangerButton { color: #cf4b57 !important; background: #fff
   .printFlowContent .appendixHeader{margin-top:0!important}
   @page{size:A4;margin:36mm 16mm 18mm}
 }
+
+/* v0.9 Railway PostgreSQL */
+.dbErrorBanner{margin:14px 24px 0;border:1px solid #f2b8b5;background:#fff4f3;color:#8c2d29;border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:8px;font-size:12px}.dbErrorBanner span{color:#9a4a46}.settingsCard code{background:#eef5fa;border:1px solid #d7e6f0;border-radius:5px;padding:1px 5px;color:#174d73;font-size:.92em}
