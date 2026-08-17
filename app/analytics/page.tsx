@@ -47,7 +47,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="pageWrap">
-      <PageHeader eyebrow="INSIGHTS V0.4" title="Analitika" subtitle="Pul, ish va loyiha tarixidan avtomatik yig‘ilgan shaxsiy biznes ko‘rsatkichlari." />
+      <PageHeader eyebrow="INSIGHTS V0.5" title="Analitika" subtitle="Pul, ish va loyiha tarixidan avtomatik yig‘ilgan shaxsiy biznes ko‘rsatkichlari." />
       <section className="analyticsGrid">
         <article className="statCard"><div className="statIcon"><FolderKanban size={20}/></div><p>Loyihalar</p><div className="statValue"><strong>{data.projects.length}</strong><span>{data.projects.filter((x) => x.status === "active").length} aktiv</span></div></article>
         <article className="statCard"><div className="statIcon"><WalletCards size={20}/></div><p>Sof pul oqimi</p><div className="statValue"><strong>{shortMoney(income-expense)}</strong><span>so‘m</span></div></article>

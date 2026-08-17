@@ -73,7 +73,7 @@ export default function LessonsPage() {
           <label className="field"><span>Sana</span><input type="date" value={editing.date} onChange={(e) => setEditing({ ...editing, date: e.target.value })} /></label>
           <label className="field"><span>Turi</span><select value={editing.type} onChange={(e) => setEditing({ ...editing, type: e.target.value as LessonType })}><option value="mistake">Xato</option><option value="lesson">Dars</option><option value="win">Yutuq</option></select></label>
           <label className="field span2"><span>Sarlavha</span><input required value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></label>
-          <label className="field span2"><span>Loyiha</span><input value={editing.project} onChange={(e) => setEditing({ ...editing, project: e.target.value })} /></label>
+          <label className="field span2"><span>Loyiha</span><input list="lesson-project-options" value={editing.project} onChange={(e) => setEditing({ ...editing, project: e.target.value })} /><datalist id="lesson-project-options">{data.projects.map((project) => <option key={project.id} value={project.name} />)}</datalist></label>
           <label className="field span2"><span>Nima bo‘ldi?</span><textarea rows={3} value={editing.situation} onChange={(e) => setEditing({ ...editing, situation: e.target.value })} /></label>
           <label className="field span2"><span>Nimani o‘rgandim?</span><textarea rows={3} value={editing.lesson} onChange={(e) => setEditing({ ...editing, lesson: e.target.value })} /></label>
           <label className="field span2"><span>Keyingi safar nima qilaman?</span><textarea rows={2} value={editing.action} onChange={(e) => setEditing({ ...editing, action: e.target.value })} /></label>

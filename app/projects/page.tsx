@@ -1,6 +1,7 @@
 "use client";
 
-import { Edit3, FolderKanban, Search, Trash2 } from "lucide-react";
+import { Edit3, Eye, FolderKanban, Search, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useAppData } from "@/components/data-provider";
 import { EmptyState, FormActions, Modal, PageHeader, StatusPill } from "@/components/ui";
@@ -89,6 +90,7 @@ export default function ProjectsPage() {
               <div className="nextAction"><span>Keyingi qadam</span><strong>{project.nextAction || "Kiritilmagan"}</strong></div>
             </div>
             <div className="entityActions">
+              <Link className="entityActionLink" href={`/projects/${project.id}`}><Eye size={15} /> Batafsil</Link>
               <button onClick={() => openEdit(project)}><Edit3 size={15} /> Tahrirlash</button>
               <button className="dangerButton" onClick={() => window.confirm("Loyihani o‘chirasizmi?") && removeProject(project.id)}><Trash2 size={15} /></button>
             </div>
@@ -102,7 +104,7 @@ export default function ProjectsPage() {
           <form className="formGrid" onSubmit={save}>
             <label className="field span2"><span>Loyiha nomi</span><input required value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="Masalan: Yangi SMM loyiha" /></label>
             <label className="field"><span>Xizmat</span><input value={editing.service} onChange={(e) => setEditing({ ...editing, service: e.target.value })} placeholder="SMM, Target, Web..." /></label>
-            <label className="field"><span>Mijoz</span><input value={editing.client} onChange={(e) => setEditing({ ...editing, client: e.target.value })} placeholder="Mijoz yoki kompaniya" /></label>
+            <label className="field"><span>Mijoz</span><input list="client-options" value={editing.client} onChange={(e) => setEditing({ ...editing, client: e.target.value })} placeholder="Mijoz yoki kompaniya" /><datalist id="client-options">{data.clients.map((client) => <option key={client.id} value={client.name} />)}</datalist></label>
             <label className="field"><span>Status</span><select value={editing.status} onChange={(e) => setEditing({ ...editing, status: e.target.value as ProjectStatus })}><option value="active">active</option><option value="paused">paused</option><option value="lead">lead</option><option value="done">done</option></select></label>
             <label className="field"><span>Progress (%)</span><input type="number" min="0" max="100" value={editing.progress} onChange={(e) => setEditing({ ...editing, progress: Number(e.target.value) })} /></label>
             <label className="field"><span>Qiymat</span><input type="number" min="0" value={editing.amount} onChange={(e) => setEditing({ ...editing, amount: Number(e.target.value) })} /></label>

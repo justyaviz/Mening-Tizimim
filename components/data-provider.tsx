@@ -1,13 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import type { AppData, Client, Contract, Goal, Lesson, Partner, Project, Service, Task, Transaction, WorkLog } from "@/lib/data";
+import type { AppData, Client, ClientInteraction, Contract, Goal, Lesson, Partner, Project, Service, Task, Transaction, WorkLog } from "@/lib/data";
 import { normalizeData, seedData } from "@/lib/data";
 import { getSupabaseClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 
-const STORAGE_KEY = "mening-tizimim-v0.4-data";
-const OLD_STORAGE_KEYS = ["mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
+const STORAGE_KEY = "mening-tizimim-v0.5-data";
+const OLD_STORAGE_KEYS = ["mening-tizimim-v0.4-data", "mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
 
 export type SyncStatus = "local" | "loading" | "syncing" | "synced" | "error";
 
@@ -45,6 +45,9 @@ type DataContextValue = {
   addGoal: (item: Goal) => void;
   updateGoal: (item: Goal) => void;
   removeGoal: (id: string) => void;
+  addInteraction: (item: ClientInteraction) => void;
+  updateInteraction: (item: ClientInteraction) => void;
+  removeInteraction: (id: string) => void;
   replaceData: (next: AppData) => void;
   resetDemo: () => void;
 };
@@ -235,6 +238,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     addGoal: (item) => setData((prev) => ({ ...prev, goals: [item, ...prev.goals] })),
     updateGoal: (item) => setData((prev) => ({ ...prev, goals: prev.goals.map((p) => p.id === item.id ? item : p) })),
     removeGoal: (id) => setData((prev) => ({ ...prev, goals: prev.goals.filter((p) => p.id !== id) })),
+    addInteraction: (item) => setData((prev) => ({ ...prev, interactions: [item, ...prev.interactions] })),
+    updateInteraction: (item) => setData((prev) => ({ ...prev, interactions: prev.interactions.map((p) => p.id === item.id ? item : p) })),
+    removeInteraction: (id) => setData((prev) => ({ ...prev, interactions: prev.interactions.filter((p) => p.id !== id) })),
     replaceData: (next) => setData(normalizeData(next)),
     resetDemo: () => setData(seedData),
   }), [data, ready, syncStatus]);

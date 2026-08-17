@@ -1,24 +1,26 @@
-# Mening Tizimim v0.4
+# Mening Tizimim v0.5
 
 Shaxsiy biznes boshqaruv platformasi. Loyiha, mijoz, hamkor, shartnoma, moliya, vazifa, kalendar va professional tarixni bitta joyda saqlaydi.
 
-## v0.4 da yangi
+## v0.5 da yangi
 
-- **Qilgan ishlarim / Work Journal** — kunlik ish, loyiha, kategoriya, sarflangan vaqt va natija.
-- **Xatolar & Darslar** — mistake / lesson / win yozuvlari va keyingi action.
-- **Xizmatlarim** — xizmat katalogi, bazaviy narx, tannarx, marja va muddat.
-- **Maqsadlar** — target qiymat, current qiymat va avtomatik progress.
-- **Hamkorlar CRM** — freelancer va hamkorlar uchun to‘liq CRUD, rate va loyiha bog‘lanishi.
-- **Global Search** — `Cmd/Ctrl + K` bilan loyiha, mijoz, shartnoma, task, hamkor, work log, lesson, service va goal bo‘yicha qidirish.
-- **Analitika v0.4** — real tranzaksiyalardan oylar bo‘yicha daromad/xarajat, daromad kategoriyalari, work log vaqt taqsimoti va learning stats.
-- Dashboardda yangi professional-memory quick links.
-- v0.3 localStorage ma’lumotlari v0.4 ga avtomatik migratsiya qilinadi.
+- **Project 360** — har bir loyiha uchun alohida detail sahifa.
+- Project 360 ichida vazifalar, pul oqimi, shartnomalar, hamkorlar, work log, darslar va activity history birlashtiriladi.
+- **Client 360** — har bir mijoz uchun alohida CRM profil.
+- **Aloqa tarixi** — qo‘ng‘iroq, uchrashuv, xabar, izoh va to‘lov yozuvlarini saqlash/tahrirlash/o‘chirish.
+- Mijoz profilida unga bog‘langan loyihalar, shartnomalar va moliya ko‘rinadi.
+- Global Search loyiha va mijozni endi to‘g‘ridan-to‘g‘ri detail sahifasida ochadi.
+- Global Search mijoz aloqa tarixini ham qidiradi.
+- Project va Client listlarda **Batafsil** / profile tugmalari qo‘shildi.
+- Yangi loyiha yaratishda mavjud CRM mijozlarini datalist orqali tanlash mumkin.
+- v0.4 localStorage ma’lumotlari v0.5 ga avtomatik migratsiya qilinadi.
+- Yangi Client Interaction ma’lumotlari Supabase workspace JSON payload bilan avtomatik cloud sync qilinadi.
 
 ## Mavjud modullar
 
 - Dashboard
-- Projects
-- Clients CRM
+- Projects + Project 360
+- Clients CRM + Client 360 + interaction history
 - Partners CRM
 - Contracts
 - Finance
@@ -29,6 +31,7 @@ Shaxsiy biznes boshqaruv platformasi. Loyiha, mijoz, hamkor, shartnoma, moliya, 
 - Services catalog
 - Goals
 - Analytics
+- Global Search
 - Settings + JSON backup
 - Supabase Auth + cloud sync + RLS
 
@@ -60,6 +63,6 @@ Env mavjud bo‘lmasa tizim avtomatik **Local Demo** rejimida ishlaydi.
 
 ```bash
 git add .
-git commit -m "Upgrade Mening Tizimim to v0.4"
+git commit -m "Upgrade Mening Tizimim to v0.5"
 git push
 ```

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.5.0 — 2026-08-17
+
+### Added
+- Project 360 dynamic detail pages at `/projects/[id]`.
+- Per-project task, finance, contract, partner, work-log, lesson and activity aggregation.
+- Client 360 dynamic CRM profiles at `/clients/[id]`.
+- Client interaction history with note/call/meeting/message/payment types and CRUD.
+- Client-level project, contract and revenue aggregation.
+- Direct Project/Client detail navigation from global search.
+- Global search support for CRM interaction history.
+
+### Changed
+- Local storage key upgraded to `mening-tizimim-v0.5-data` with v0.4/v0.3/v0.2 migration fallback.
+- Projects can select existing CRM clients through a datalist.
+- Project and client listing pages now expose direct detail/profile actions.
+- Workspace payload schema expanded with `interactions` while preserving the single Supabase JSON row architecture.
+
 ## 0.4.0 — 2026-08-17
 
 ### Added
@@ -16,7 +33,6 @@
 - Sidebar expanded with Work, Lessons, Services and Goals.
 - Data model expanded while keeping the single Supabase JSON workspace payload.
 - Local storage key upgraded to `mening-tizimim-v0.4-data` with v0.3/v0.2 migration fallback.
-- Settings backup/reset copy updated for the v0.4 data model.
 
 ## 0.3.0
 - Supabase Auth and cloud sync.

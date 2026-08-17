@@ -1,6 +1,7 @@
 "use client";
 
-import { Building2, Edit3, Instagram, MessageCircle, Phone, Search, Trash2, UserRound } from "lucide-react";
+import { Building2, Edit3, Eye, Instagram, MessageCircle, Phone, Search, Trash2, UserRound } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useAppData } from "@/components/data-provider";
 import { EmptyState, FormActions, Modal, PageHeader, StatusPill } from "@/components/ui";
@@ -72,7 +73,7 @@ export default function ClientsPage() {
               {!client.phone && !client.telegram && !client.instagram && <span className="mutedText">Aloqa kiritilmagan</span>}
             </div>
             <div className="sourceCell"><Building2 size={14} /><span>{client.source || "—"}</span></div>
-            <div className="rowActions"><button onClick={() => edit(client)}><Edit3 size={15} /></button><button className="dangerButton" onClick={() => window.confirm("Mijozni o‘chirasizmi?") && removeClient(client.id)}><Trash2 size={15} /></button></div>
+            <div className="rowActions"><Link className="rowActionLink" href={`/clients/${client.id}`}><Eye size={15} /></Link><button onClick={() => edit(client)}><Edit3 size={15} /></button><button className="dangerButton" onClick={() => window.confirm("Mijozni o‘chirasizmi?") && removeClient(client.id)}><Trash2 size={15} /></button></div>
           </div>
         ))}
       </section>

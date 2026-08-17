@@ -8,6 +8,7 @@ export type TaskPriority = "low" | "medium" | "high";
 export type PartnerStatus = "active" | "available" | "paused";
 export type LessonType = "mistake" | "lesson" | "win";
 export type GoalStatus = "planned" | "active" | "done" | "paused";
+export type InteractionType = "note" | "call" | "meeting" | "message" | "payment";
 
 export type Project = {
   id: string;
@@ -138,6 +139,19 @@ export type Goal = {
   note: string;
 };
 
+
+export type ClientInteraction = {
+  id: string;
+  clientId: string;
+  clientName: string;
+  type: InteractionType;
+  date: string;
+  title: string;
+  summary: string;
+  project: string;
+  nextAction: string;
+};
+
 export type AppData = {
   projects: Project[];
   clients: Client[];
@@ -149,6 +163,7 @@ export type AppData = {
   lessons: Lesson[];
   services: Service[];
   goals: Goal[];
+  interactions: ClientInteraction[];
 };
 
 export const seedData: AppData = {
@@ -203,6 +218,13 @@ export const seedData: AppData = {
     { id: "goal-1", title: "Oylik daromadni oshirish", category: "Finance", status: "active", targetDate: "2026-12-31", progress: 48, metric: "USD ekvivalent", targetValue: 5000, currentValue: 2400, note: "Premium SMM va web loyihalar ulushini oshirish." },
     { id: "goal-2", title: "Shaxsiy brendda muntazam kontent", category: "Personal Brand", status: "active", targetDate: "2026-09-30", progress: 35, metric: "Kontent soni", targetValue: 30, currentValue: 11, note: "Haftasiga kamida 3 ta kuchli kontent." },
   ],
+
+  interactions: [
+    { id: "interaction-1", clientId: "c-start", clientName: "Start Education", type: "meeting", date: "2026-08-15T14:30", title: "Avgust kampaniyalari bo‘yicha kelishuv", summary: "Kontent, target va mijoz intervyulari bo‘yicha ustuvor yo‘nalishlar kelishildi.", project: "Start Education", nextAction: "Haftalik natijalarni yuborish." },
+    { id: "interaction-2", clientId: "c-start", clientName: "Start Education", type: "message", date: "2026-08-17T10:20", title: "Reels materiali tasdiqlandi", summary: "Yangi mijoz fikri videosi tasdiqlandi va joylash vaqti kelishildi.", project: "Start Education", nextAction: "Reelsni joylash va targetga ulash." },
+    { id: "interaction-3", clientId: "c-aloo", clientName: "aloo", type: "call", date: "2026-08-16T18:00", title: "Haftalik marketing call", summary: "Aksiya vizuallari va keyingi haftadagi kontent ustuvorliklari ko‘rib chiqildi.", project: "aloo", nextAction: "Haftalik hisobotni tayyorlash." },
+    { id: "interaction-4", clientId: "c-new", clientName: "New client", type: "payment", date: "2026-08-10T12:00", title: "Web loyiha avansi", summary: "Website development uchun boshlang‘ich to‘lov va scope tasdiqlandi.", project: "Web loyiha #01", nextAction: "Bosh sahifa previewini yuborish." },
+  ],
 };
 
 export function normalizeData(raw: Partial<AppData> | null | undefined): AppData {
@@ -218,6 +240,7 @@ export function normalizeData(raw: Partial<AppData> | null | undefined): AppData
     lessons: Array.isArray(safe.lessons) ? safe.lessons : seedData.lessons,
     services: Array.isArray(safe.services) ? safe.services : seedData.services,
     goals: Array.isArray(safe.goals) ? safe.goals : seedData.goals,
+    interactions: Array.isArray(safe.interactions) ? safe.interactions : seedData.interactions,
   };
 }
 

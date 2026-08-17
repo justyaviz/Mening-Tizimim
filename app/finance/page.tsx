@@ -90,7 +90,7 @@ export default function FinancePage() {
           <label className="field"><span>Sana</span><input type="date" value={editing.date} onChange={(e) => setEditing({ ...editing, date: e.target.value })} /></label>
           <label className="field span2"><span>Nomi</span><input required value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} placeholder="Masalan: Avgust SMM to‘lovi" /></label>
           <label className="field"><span>Kategoriya</span><input value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} placeholder="SMM, Web, Ads..." /></label>
-          <label className="field"><span>Loyiha</span><input value={editing.project} onChange={(e) => setEditing({ ...editing, project: e.target.value })} /></label>
+          <label className="field"><span>Loyiha</span><input list="finance-project-options" value={editing.project} onChange={(e) => setEditing({ ...editing, project: e.target.value })} /><datalist id="finance-project-options">{data.projects.map((project) => <option key={project.id} value={project.name} />)}</datalist></label>
           <label className="field"><span>Summa</span><input type="number" min="1" value={editing.amount} onChange={(e) => setEditing({ ...editing, amount: Number(e.target.value) })} /></label>
           <label className="field"><span>Valyuta</span><select value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value as Currency })}><option value="UZS">UZS</option><option value="USD">USD</option></select></label>
           <label className="field span2"><span>Izoh</span><textarea rows={3} value={editing.note} onChange={(e) => setEditing({ ...editing, note: e.target.value })} /></label>

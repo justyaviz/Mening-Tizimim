@@ -142,7 +142,7 @@ export default function Home() {
           })}
           <div className="miniInsight">
             <FileSignature size={19} />
-            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.4 da biznes xotira, xizmatlar va maqsadlar ham cloud bazaga sinxronlanadi.</span></div>
+            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.5 da loyiha 360 va mijoz aloqa tarixi ham cloud bazaga sinxronlanadi.</span></div>
           </div>
         </div>
       </section>

@@ -98,8 +98,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     const add = (title: string, meta: string, href: string, kind: string, haystack: string) => {
       if (haystack.toLowerCase().includes(q)) results.push({ title, meta, href, kind });
     };
-    data.projects.forEach((x) => add(x.name, `${x.client} · ${x.service}`, "/projects", "Loyiha", `${x.name} ${x.client} ${x.service} ${x.nextAction}`));
-    data.clients.forEach((x) => add(x.name, `${x.company} · ${x.role}`, "/clients", "Mijoz", `${x.name} ${x.company} ${x.role} ${x.instagram}`));
+    data.projects.forEach((x) => add(x.name, `${x.client} · ${x.service}`, `/projects/${x.id}`, "Loyiha", `${x.name} ${x.client} ${x.service} ${x.nextAction}`));
+    data.clients.forEach((x) => add(x.name, `${x.company} · ${x.role}`, `/clients/${x.id}`, "Mijoz", `${x.name} ${x.company} ${x.role} ${x.instagram}`));
     data.contracts.forEach((x) => add(x.title, `${x.client} · ${x.project}`, "/contracts", "Shartnoma", `${x.title} ${x.client} ${x.project} ${x.note}`));
     data.tasks.forEach((x) => add(x.title, `${x.project || "Umumiy"} · ${x.status}`, "/tasks", "Vazifa", `${x.title} ${x.project} ${x.description}`));
     data.partners.forEach((x) => add(x.name, `${x.specialty} · ${x.status}`, "/partners", "Hamkor", `${x.name} ${x.specialty} ${x.projects} ${x.telegram}`));
@@ -107,6 +107,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     data.lessons.forEach((x) => add(x.title, `${x.type} · ${x.project || "Umumiy"}`, "/lessons", "Dars", `${x.title} ${x.project} ${x.situation} ${x.lesson} ${x.action}`));
     data.services.forEach((x) => add(x.name, `${x.category} · ${x.unit}`, "/services", "Xizmat", `${x.name} ${x.category} ${x.note}`));
     data.goals.forEach((x) => add(x.title, `${x.category} · ${x.progress}%`, "/goals", "Maqsad", `${x.title} ${x.category} ${x.metric} ${x.note}`));
+    data.interactions.forEach((x) => add(x.title, `${x.clientName} · ${x.type}`, `/clients/${x.clientId}`, "Aloqa", `${x.title} ${x.clientName} ${x.summary} ${x.project} ${x.nextAction}`));
     return results.slice(0, 9);
   }, [data, searchQuery]);
 
@@ -162,7 +163,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/analytics" className={`navItem ${isActive("/analytics") ? "active" : ""}`}><BarChart3 size={19} /><span>Analitika</span></Link>
           <Link href="/settings" className={`navItem ${isActive("/settings") ? "active" : ""}`}><Settings size={19} /><span>Sozlamalar</span></Link>
           {configured && user && <button className="navItem sidebarLogout" onClick={handleSignOut}><LogOut size={19} /><span>Chiqish</span></button>}
-          <div className="version">Mening Tizimim <b>v0.4</b></div>
+          <div className="version">Mening Tizimim <b>v0.5</b></div>
         </div>
       </aside>
 
