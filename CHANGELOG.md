@@ -1,5 +1,12 @@
 # Mening Tizimim Changelog
 
+## v0.8.3
+- PDF eksportidagi katta bo‘sh joylar tuzatildi.
+- Asosiy shartnoma bo‘limlari PDF yaratish vaqtida A4 sahifalarga avtomatik zich joylanadi.
+- Bo‘limlar sahifa oralig‘ida keraksiz bo‘shliq qoldirmasdan keyingi mavjud joyga ko‘chiriladi.
+- 1-ilova va 2-ilova professional hujjat tartibiga ko‘ra alohida sahifadan boshlanadi.
+- PDF footer sahifa soni dinamik hisoblanadi.
+
 ## v0.8.2
 - PDF tugmasi endi brauzer Print oynasini ochmaydi; haqiqiy .pdf faylni to‘g‘ridan-to‘g‘ri generatsiya qilib yuklaydi.
 - A4 preview sahifalari PDFga aynan ko‘rinishidagi kabi render qilinadi.

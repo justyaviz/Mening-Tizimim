@@ -281,10 +281,12 @@ function ContractBuilderContent() {
   }
 
   async function pdfDownload() {
-    const pages = Array.from(document.querySelectorAll<HTMLElement>("[data-contract-page]"));
-    if (!pages.length || pdfBusy) return;
+    const previewPages = Array.from(document.querySelectorAll<HTMLElement>("[data-contract-page]"));
+    if (!previewPages.length || pdfBusy) return;
 
     setPdfBusy(true);
+    let staging: HTMLDivElement | null = null;
+
     try {
       const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
         import("html2canvas"),
@@ -293,26 +295,123 @@ function ContractBuilderContent() {
 
       if (document.fonts?.ready) await document.fonts.ready;
 
-      const imageNodes = pages.flatMap((page) => Array.from(page.querySelectorAll<HTMLImageElement>("img")));
+      // PDF uchun asosiy shartnoma bandlarini fixed preview sahifalaridan olib,
+      // A4 ichidagi mavjud joyga avtomatik qayta joylaymiz. Shu bilan katta
+      // bo‘sh joylar kamayadi, lekin 1- va 2-ilova yangi sahifadan boshlanadi.
+      const mainBlocks = previewPages.slice(0, 5).flatMap((page) => {
+        const content = page.querySelector<HTMLElement>(".contractPaperContent");
+        return content ? Array.from(content.children).map((node) => node.cloneNode(true) as HTMLElement) : [];
+      });
+
+      staging = document.createElement("div");
+      staging.id = "contractPdfStaging";
+      staging.style.cssText = "position:fixed;left:-12000px;top:0;width:794px;z-index:-99999;background:#fff;";
+      document.body.appendChild(staging);
+
+      const measure = document.createElement("div");
+      measure.className = "contractPaperContent";
+      measure.style.cssText = [
+        "position:absolute",
+        "left:-10000px",
+        "top:0",
+        "visibility:hidden",
+        "width:672px",
+        "padding:0",
+        "box-sizing:border-box",
+        "font-family:'Times New Roman',Times,serif",
+        "font-size:12.4px",
+        "line-height:1.34",
+      ].join(";");
+      staging.appendChild(measure);
+
+      // 1123px A4 preview - 148px header safe zone - 82px footer safe zone.
+      // Bir oz qo‘shimcha xavfsizlik qoldiramiz, shunda bandlar footerga tegmaydi.
+      const maxContentHeight = 865;
+      const packedGroups: HTMLElement[][] = [];
+      let current: HTMLElement[] = [];
+
+      const fits = (nodes: HTMLElement[]) => {
+        measure.replaceChildren(...nodes.map((node) => node.cloneNode(true) as HTMLElement));
+        return measure.scrollHeight <= maxContentHeight;
+      };
+
+      for (const block of mainBlocks) {
+        if (!current.length || fits([...current, block])) {
+          current.push(block);
+        } else {
+          packedGroups.push(current);
+          current = [block];
+        }
+      }
+      if (current.length) packedGroups.push(current);
+      measure.remove();
+
+      const appendixCount = Math.max(0, previewPages.length - 5);
+      const totalPdfPages = packedGroups.length + appendixCount;
+      const stagedPages: HTMLElement[] = [];
+
+      const makeFooter = (pageNo: number) => {
+        const footer = document.createElement("div");
+        footer.className = "contractFooterMeta";
+        footer.innerHTML = `<span>Shartnoma № ${draft.number || "________"}</span><span>Document ID: ${documentId}</span><span>${pageNo}/${totalPdfPages}</span>`;
+        return footer;
+      };
+
+      const makePackedPage = (blocks: HTMLElement[], pageNo: number) => {
+        const article = document.createElement("article");
+        article.className = "contractPaper contractPdfPackedPage";
+        article.style.cssText = "width:794px;min-height:1123px;height:1123px;box-shadow:none;transform:none;overflow:hidden;position:relative;background:#fff;";
+
+        const bg = document.createElement("img");
+        bg.src = "/mening-tizimim-letterhead.png";
+        bg.alt = "";
+        bg.className = "contractPaperBg";
+        article.appendChild(bg);
+
+        const content = document.createElement("div");
+        content.className = "contractPaperContent";
+        content.style.cssText = "padding:148px 61px 82px;box-sizing:border-box;font-size:12.4px;line-height:1.34;";
+        blocks.forEach((block) => content.appendChild(block.cloneNode(true)));
+        article.appendChild(content);
+        article.appendChild(makeFooter(pageNo));
+        return article;
+      };
+
+      packedGroups.forEach((group, index) => {
+        const page = makePackedPage(group, index + 1);
+        staging!.appendChild(page);
+        stagedPages.push(page);
+      });
+
+      // Ilovalar alohida boshlanishi kerak, shuning uchun ularni mavjud A4
+      // layout bilan saqlaymiz, faqat sahifa raqamini yangi totalga moslaymiz.
+      previewPages.slice(5).forEach((source, index) => {
+        const clone = source.cloneNode(true) as HTMLElement;
+        clone.classList.add("contractPdfPackedPage");
+        clone.style.cssText = "width:794px;min-height:1123px;height:1123px;box-shadow:none;transform:none;overflow:hidden;position:relative;background:#fff;";
+        const content = clone.querySelector<HTMLElement>(".contractPaperContent");
+        if (content) content.style.cssText = "padding:148px 61px 82px;box-sizing:border-box;font-size:12.4px;line-height:1.34;";
+        const footer = clone.querySelector<HTMLElement>(".contractFooterMeta");
+        if (footer) footer.replaceWith(makeFooter(packedGroups.length + index + 1));
+        staging!.appendChild(clone);
+        stagedPages.push(clone);
+      });
+
+      const imageNodes = stagedPages.flatMap((page) => Array.from(page.querySelectorAll<HTMLImageElement>("img")));
       await Promise.all(imageNodes.map((img) => {
         if (img.complete && img.naturalWidth > 0) return Promise.resolve();
         return new Promise<void>((resolve) => {
           const done = () => resolve();
           img.addEventListener("load", done, { once: true });
           img.addEventListener("error", done, { once: true });
-          setTimeout(done, 2500);
+          setTimeout(done, 3000);
         });
       }));
 
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
 
-      for (let index = 0; index < pages.length; index += 1) {
-        const page = pages[index];
-        const oldShadow = page.style.boxShadow;
-        const oldTransform = page.style.transform;
-        page.style.boxShadow = "none";
-        page.style.transform = "none";
-
+      for (let index = 0; index < stagedPages.length; index += 1) {
+        const page = stagedPages[index];
         const canvas = await html2canvas(page, {
           scale: 2,
           useCORS: true,
@@ -320,11 +419,8 @@ function ContractBuilderContent() {
           logging: false,
           backgroundColor: "#ffffff",
           imageTimeout: 5000,
-          windowWidth: Math.max(document.documentElement.clientWidth, 1400),
+          windowWidth: 1600,
         });
-
-        page.style.boxShadow = oldShadow;
-        page.style.transform = oldTransform;
 
         const imgData = canvas.toDataURL("image/jpeg", 0.96);
         if (index > 0) pdf.addPage("a4", "portrait");
@@ -337,6 +433,7 @@ function ContractBuilderContent() {
       console.error("PDF generation failed", error);
       window.alert("PDF yaratishda xatolik yuz berdi. Sahifani yangilab qayta urinib ko‘ring.");
     } finally {
+      staging?.remove();
       setPdfBusy(false);
     }
   }
