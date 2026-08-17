@@ -778,3 +778,114 @@ button.dangerButton, .dangerButton { color: #cf4b57 !important; background: #fff
   .client360Identity { align-items: flex-start; }
   .client360Avatar { width: 44px; height: 44px; border-radius: 12px; }
 }
+
+/* v0.6 — Payment control */
+.status.danger { color: #b74d57; background: #fff0f2; }
+.quickModuleStrip { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.paymentPulse { min-height: 72px; display: grid; grid-template-columns: 38px minmax(0,1fr) auto 18px; align-items: center; gap: 11px; padding: 12px 14px; margin: 0 0 14px; border: 1px solid #dce8f8; border-radius: 14px; background: linear-gradient(135deg, #f7fbff, #eef6ff); color: var(--blue); text-decoration: none; transition: .18s ease; }
+.paymentPulse:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(12,103,253,.07); }
+.paymentPulse.hasOverdue { border-color: #f0cfd3; background: linear-gradient(135deg, #fffafa, #fff3f4); }
+.paymentPulseIcon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: white; box-shadow: 0 5px 14px rgba(25,72,128,.08); }
+.paymentPulse > div:nth-child(2) span, .paymentPulse > div:nth-child(2) strong, .paymentPulse > div:nth-child(2) small { display: block; }
+.paymentPulse > div:nth-child(2) span { font-size: 5.7px; font-weight: 700; letter-spacing: .08em; color: #6e96c8; }
+.paymentPulse > div:nth-child(2) strong { margin-top: 3px; font-size: 9px; color: #344b69; }
+.paymentPulse > div:nth-child(2) small { margin-top: 2px; font-size: 6.3px; color: #8494a8; }
+.paymentPulseRight { min-width: 58px; text-align: right; }
+.paymentPulseRight strong, .paymentPulseRight span { display: block; }
+.paymentPulseRight strong { color: #42546d; font-size: 13px; }
+.paymentPulseRight span { color: #929eae; font-size: 6px; }
+.paymentPulse.hasOverdue .paymentPulseRight strong { color: #bd5962; }
+
+.paymentStats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; margin-bottom: 14px; }
+.paymentStat { min-height: 92px; display: grid; grid-template-columns: 38px minmax(0,1fr); gap: 10px; align-items: center; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: white; }
+.paymentStatIcon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: #eef6ff; color: var(--blue); }
+.paymentStat.overdue .paymentStatIcon { color: #bd5962; background: #fff0f2; }
+.paymentStat.recurring .paymentStatIcon { color: #7b64c8; background: #f3f0ff; }
+.paymentStat.invoices .paymentStatIcon { color: #25876c; background: #ecf9f4; }
+.paymentStat span, .paymentStat strong, .paymentStat small { display: block; overflow: hidden; text-overflow: ellipsis; }
+.paymentStat span { color: #8d99aa; font-size: 6.3px; }
+.paymentStat strong { margin-top: 4px; color: #405069; font-size: 11px; white-space: nowrap; }
+.paymentStat small { margin-top: 3px; color: #9ca6b4; font-size: 6px; white-space: nowrap; }
+.paymentToolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+.paymentToolbar .tableSearch { flex: 1; min-width: 190px; }
+.paymentFilter { flex-wrap: wrap; justify-content: flex-end; }
+.paymentCols { grid-template-columns: minmax(210px, 2fr) 82px 100px 105px 105px 105px 92px; }
+.paymentTable { overflow-x: auto; }
+.paymentTable .entityTableHead, .paymentTable .entityTableRow { min-width: 850px; }
+.invoiceOverdueRow { background: #fffafb; }
+.invoiceIcon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: #edf5ff; color: var(--blue); }
+.invoiceOverdueRow .invoiceIcon { background: #fff0f2; color: #bd5962; }
+.invoiceDue strong, .invoiceDue small, .invoiceMoney strong { display: block; }
+.invoiceDue strong { color: #59687d; font-size: 7px; }
+.invoiceDue small { margin-top: 3px; color: #9aa5b4; font-size: 5.8px; }
+.invoiceOverdueRow .invoiceDue strong { color: #b4535d; }
+.invoiceMoney strong { color: #526076; font-size: 7px; white-space: nowrap; }
+.invoiceMoney.paid strong { color: #2b8e68; }
+.invoiceMoney.outstanding strong { color: #b56b26; }
+.invoiceMoney.outstanding.zero strong { color: #7d8999; }
+.paymentActions { gap: 5px; }
+.receiveButton { color: #238361 !important; background: #eaf8f2 !important; border-color: #d1eee2 !important; }
+.recurringPanel { margin-top: 14px; }
+.recurringHead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.recurringHead > div { display: flex; align-items: center; gap: 8px; color: var(--blue); }
+.recurringHead strong, .recurringHead span { display: block; }
+.recurringHead strong { color: #45546a; font-size: 9px; }
+.recurringHead span { margin-top: 2px; color: #929dac; font-size: 6.2px; }
+.recurringList { display: flex; flex-direction: column; }
+.recurringItem { display: grid; grid-template-columns: minmax(0,1.5fr) minmax(130px,.7fr) auto; align-items: center; gap: 12px; padding: 10px 1px; border-top: 1px solid #f0f3f7; }
+.recurringItem:first-child { border-top: 0; }
+.recurringItem strong, .recurringItem span { display: block; }
+.recurringItem strong { color: #4d5b70; font-size: 7.5px; }
+.recurringItem span { margin-top: 3px; color: #96a1b0; font-size: 6px; }
+.paymentReceiveForm { display: flex; flex-direction: column; gap: 13px; }
+.paymentReceiveSummary { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; padding: 12px; border-radius: 11px; background: #f6f9fd; }
+.paymentReceiveSummary span { color: #8794a6; font-size: 6.5px; }
+.paymentReceiveSummary strong { color: #46566d; font-size: 8px; text-align: right; }
+.paymentReceiveHint { margin: 0; padding: 9px 10px; border-radius: 9px; background: #edf6ff; color: #6c819c; font-size: 6.5px; line-height: 1.5; }
+.calendarEvent.invoice { background: #fff1e8; color: #a6672a; }
+.calendarLegend i.invoice { background: #d88a42; }
+
+@media (max-width: 1120px) {
+  .quickModuleStrip { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .paymentStats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+  .paymentToolbar { align-items: stretch; flex-direction: column; }
+  .paymentFilter { justify-content: flex-start; }
+  .paymentPulse { grid-template-columns: 38px minmax(0,1fr) auto; }
+  .paymentPulse > svg { display: none; }
+}
+@media (max-width: 620px) {
+  .quickModuleStrip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .paymentStats { grid-template-columns: 1fr; }
+  .recurringItem { grid-template-columns: 1fr auto; }
+  .recurringItem > .status { grid-column: 2; grid-row: 1; }
+}
+@media (max-width: 430px) {
+  .quickModuleStrip { grid-template-columns: 1fr; }
+  .paymentPulseRight { display: none; }
+  .paymentPulse { grid-template-columns: 38px minmax(0,1fr); }
+}
+.invoice360Item { position: relative; padding: 10px; border: 1px solid #edf1f6; border-radius: 9px; background: #fbfcfe; }
+.invoice360Item > div { display: flex; align-items: center; gap: 6px; color: var(--blue); padding-right: 58px; }
+.invoice360Item > div strong { color: #46546a; font-size: 7.5px; }
+.invoice360Item > span, .invoice360Item > small { display: flex; align-items: center; gap: 4px; margin-top: 5px; color: #8e99aa; font-size: 6px; }
+.invoice360Item > .status { position: absolute; right: 8px; top: 8px; }
+.recurringActions { display: flex; align-items: center; justify-content: flex-end; gap: 7px; }
+.miniInvoiceButton { min-height: 27px; border: 1px solid #dce8f6; background: #f7fbff; color: var(--blue); border-radius: 7px; padding: 0 8px; font-size: 6.2px; font-weight: 600; white-space: nowrap; }
+.miniInvoiceButton:hover { background: #edf5ff; border-color: #c8ddf5; }
+@media (max-width: 620px) { .recurringActions { grid-column: 1 / -1; justify-content: flex-start; } }
+.debtorPanel { margin-top: 14px; }
+.debtorCount { padding: 5px 8px; border-radius: 99px; background: #f1f5fa; color: #7f8da1; font-size: 6px; }
+.debtorList { display: flex; flex-direction: column; }
+.debtorItem { display: grid; grid-template-columns: 34px minmax(0,1.4fr) minmax(150px,.7fr) auto; gap: 10px; align-items: center; padding: 10px 1px; border-top: 1px solid #f0f3f7; }
+.debtorItem:first-child { border-top: 0; }
+.debtorItem.hasOverdue { background: linear-gradient(90deg, rgba(255,240,242,.7), transparent); }
+.debtorAvatar { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: #edf5ff; color: var(--blue); font-size: 7px; font-weight: 700; }
+.debtorCopy strong, .debtorCopy span, .debtorMoney strong, .debtorMoney span { display: block; }
+.debtorCopy strong { color: #48576d; font-size: 7.8px; }
+.debtorCopy span { margin-top: 3px; color: #98a2b1; font-size: 6px; }
+.debtorMoney { text-align: right; }
+.debtorMoney strong { color: #4d5d73; font-size: 7px; }
+.debtorMoney span { margin-top: 3px; color: #8d99aa; font-size: 6px; }
+@media (max-width: 700px) { .debtorItem { grid-template-columns: 34px minmax(0,1fr) auto; } .debtorMoney { grid-column: 2 / -1; grid-row: 2; text-align: left; } }

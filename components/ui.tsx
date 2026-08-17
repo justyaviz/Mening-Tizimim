@@ -57,13 +57,15 @@ export function EmptyState({ title, text }: { title: string; text: string }) {
 
 export function StatusPill({ value }: { value: string }) {
   const normalized = value.toLowerCase();
-  const tone = normalized.includes("active") || normalized.includes("aktiv") || normalized.includes("income")
+  const tone = normalized.includes("paid") || normalized.includes("to‘langan") || normalized.includes("tolangan") || normalized.includes("active") || normalized.includes("aktiv") || normalized.includes("income")
     ? "success"
-    : normalized.includes("ending") || normalized.includes("yaqin") || normalized.includes("lead")
-      ? "warning"
-      : normalized.includes("done") || normalized.includes("completed") || normalized.includes("yakun")
-        ? "neutral"
-        : "info";
+    : normalized.includes("overdue") || normalized.includes("kechik")
+      ? "danger"
+      : normalized.includes("ending") || normalized.includes("yaqin") || normalized.includes("lead") || normalized.includes("partial") || normalized.includes("qisman")
+        ? "warning"
+        : normalized.includes("done") || normalized.includes("completed") || normalized.includes("yakun") || normalized.includes("cancel") || normalized.includes("bekor")
+          ? "neutral"
+          : "info";
   return <span className={`status ${tone}`}>{value}</span>;
 }
 

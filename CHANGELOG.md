@@ -1,3 +1,13 @@
+# v0.6.0
+
+- Payment Control: invoice, debitor va qoldiq to‘lovlar moduli.
+- Hisob yaratish/tahrirlash/o‘chirish va statuslar: draft, yuborilgan, qisman, to‘langan, kechikkan, bekor.
+- Partial payment va avtomatik outstanding hisoblash.
+- Payment receipt Moliya tranzaksiyasiga avtomatik yoziladi.
+- Recurring income aktiv oylik shartnomalardan hisoblanadi.
+- Payment deadline Kalendar va global qidiruvga qo‘shildi.
+- Dashboard payment pulse va v0.6 local/cloud migratsiya.
+
 # Changelog
 
 ## 0.5.1 — Build hotfix

@@ -9,6 +9,7 @@ export type PartnerStatus = "active" | "available" | "paused";
 export type LessonType = "mistake" | "lesson" | "win";
 export type GoalStatus = "planned" | "active" | "done" | "paused";
 export type InteractionType = "note" | "call" | "meeting" | "message" | "payment";
+export type InvoiceStatus = "draft" | "sent" | "partial" | "paid" | "overdue" | "cancelled";
 
 export type Project = {
   id: string;
@@ -61,6 +62,22 @@ export type Transaction = {
   amount: number;
   currency: Currency;
   date: string;
+  note: string;
+};
+
+export type Invoice = {
+  id: string;
+  number: string;
+  title: string;
+  client: string;
+  project: string;
+  contractId: string;
+  status: InvoiceStatus;
+  amount: number;
+  paidAmount: number;
+  currency: Currency;
+  issueDate: string;
+  dueDate: string;
   note: string;
 };
 
@@ -157,6 +174,7 @@ export type AppData = {
   clients: Client[];
   contracts: Contract[];
   transactions: Transaction[];
+  invoices: Invoice[];
   tasks: Task[];
   partners: Partner[];
   workLogs: WorkLog[];
@@ -187,6 +205,12 @@ export const seedData: AppData = {
     { id: "t2", type: "income", title: "Marketing oylik to'lovi", category: "Marketing", project: "aloo", amount: 4000000, currency: "UZS", date: "2026-08-07", note: "Avgust oyi." },
     { id: "t3", type: "expense", title: "Reklama va xizmat xarajati", category: "Ads / Tools", project: "General", amount: 1650000, currency: "UZS", date: "2026-08-12", note: "Ish jarayoni xarajatlari." },
     { id: "t4", type: "expense", title: "Freelancer to'lovi", category: "Team", project: "SMM loyiha", amount: 900000, currency: "UZS", date: "2026-08-14", note: "Qo'shimcha xizmat." },
+  ],
+  invoices: [
+    { id: "inv-start-aug", number: "MT-2026-001", title: "Avgust SMM + Target", client: "Start Education", project: "Start Education", contractId: "", status: "paid", amount: 7000000, paidAmount: 7000000, currency: "UZS", issueDate: "2026-08-01", dueDate: "2026-08-05", note: "Avgust oyi to‘lovi." },
+    { id: "inv-aloo-aug", number: "MT-2026-002", title: "Avgust Marketing + SMM", client: "aloo", project: "aloo", contractId: "", status: "paid", amount: 4000000, paidAmount: 4000000, currency: "UZS", issueDate: "2026-08-01", dueDate: "2026-08-07", note: "Avgust oyi to‘lovi." },
+    { id: "inv-web-01", number: "MT-2026-003", title: "Web development milestone", client: "New client", project: "Web loyiha #01", contractId: "ct-web", status: "partial", amount: 900, paidAmount: 300, currency: "USD", issueDate: "2026-08-10", dueDate: "2026-09-01", note: "300$ avans qabul qilingan, qoldiq loyiha yakunida." },
+    { id: "inv-volidam-aug", number: "MT-2026-004", title: "Avgust SMM xizmati", client: "Volidam Patir", project: "SMM loyiha", contractId: "ct-smm", status: "sent", amount: 1200, paidAmount: 0, currency: "USD", issueDate: "2026-08-01", dueDate: "2026-08-25", note: "Oylik SMM to‘lovi." },
   ],
   tasks: [
     { id: "task-1", title: "Start Education kontent va target rejasini tekshirish", project: "Start Education", status: "todo", priority: "high", dueAt: "2026-08-17T17:00", reminderAt: "2026-08-17T16:30", description: "Bugungi kampaniyalar va kontent chiqishlarini yakuniy tekshirish.", createdAt: "2026-08-17T09:00:00" },
@@ -234,6 +258,7 @@ export function normalizeData(raw: Partial<AppData> | null | undefined): AppData
     clients: Array.isArray(safe.clients) ? safe.clients : seedData.clients,
     contracts: Array.isArray(safe.contracts) ? safe.contracts : seedData.contracts,
     transactions: Array.isArray(safe.transactions) ? safe.transactions : seedData.transactions,
+    invoices: Array.isArray(safe.invoices) ? safe.invoices : [],
     tasks: Array.isArray(safe.tasks) ? safe.tasks : seedData.tasks,
     partners: Array.isArray(safe.partners) ? safe.partners : seedData.partners,
     workLogs: Array.isArray(safe.workLogs) ? safe.workLogs : seedData.workLogs,
@@ -242,6 +267,21 @@ export function normalizeData(raw: Partial<AppData> | null | undefined): AppData
     goals: Array.isArray(safe.goals) ? safe.goals : seedData.goals,
     interactions: Array.isArray(safe.interactions) ? safe.interactions : seedData.interactions,
   };
+}
+
+export function invoiceOutstanding(invoice: Invoice) {
+  return Math.max(0, invoice.amount - Math.max(0, invoice.paidAmount || 0));
+}
+
+export function effectiveInvoiceStatus(invoice: Invoice, today = new Date()): InvoiceStatus {
+  if (invoice.status === "cancelled" || invoice.status === "draft") return invoice.status;
+  const outstanding = invoiceOutstanding(invoice);
+  if (outstanding <= 0) return "paid";
+  const paid = Math.max(0, invoice.paidAmount || 0);
+  const due = invoice.dueDate ? new Date(`${invoice.dueDate}T23:59:59`) : null;
+  if (due && !Number.isNaN(due.getTime()) && due.getTime() < today.getTime()) return "overdue";
+  if (paid > 0) return "partial";
+  return invoice.status === "paid" ? "sent" : invoice.status;
 }
 
 export function makeId(prefix = "id") {

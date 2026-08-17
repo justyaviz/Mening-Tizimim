@@ -1,4 +1,4 @@
--- Mening Tizimim v0.5
+-- Mening Tizimim v0.6
 -- Supabase SQL Editor ichida bir marta ishga tushiring.
 
 create table if not exists public.workspace_data (

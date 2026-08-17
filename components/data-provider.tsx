@@ -1,13 +1,24 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import type { AppData, Client, ClientInteraction, Contract, Goal, Lesson, Partner, Project, Service, Task, Transaction, WorkLog } from "@/lib/data";
+import type { AppData, Client, ClientInteraction, Contract, Goal, Invoice, Lesson, Partner, Project, Service, Task, Transaction, WorkLog } from "@/lib/data";
 import { normalizeData, seedData } from "@/lib/data";
 import { getSupabaseClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 
-const STORAGE_KEY = "mening-tizimim-v0.5-data";
-const OLD_STORAGE_KEYS = ["mening-tizimim-v0.4-data", "mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
+const STORAGE_KEY = "mening-tizimim-v0.6-data";
+const OLD_STORAGE_KEYS = ["mening-tizimim-v0.5-data", "mening-tizimim-v0.4-data", "mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
+
+function findLocalBackup(userId?: string) {
+  const keys = userId
+    ? [`${STORAGE_KEY}-${userId}`, STORAGE_KEY, ...OLD_STORAGE_KEYS.map((key) => `${key}-${userId}`), ...OLD_STORAGE_KEYS]
+    : [STORAGE_KEY, ...OLD_STORAGE_KEYS];
+  for (const key of keys) {
+    const value = localStorage.getItem(key);
+    if (value) return value;
+  }
+  return null;
+}
 
 export type SyncStatus = "local" | "loading" | "syncing" | "synced" | "error";
 
@@ -26,6 +37,9 @@ type DataContextValue = {
   removeContract: (id: string) => void;
   addTransaction: (item: Transaction) => void;
   removeTransaction: (id: string) => void;
+  addInvoice: (item: Invoice) => void;
+  updateInvoice: (item: Invoice) => void;
+  removeInvoice: (id: string) => void;
   addTask: (item: Task) => void;
   updateTask: (item: Task) => void;
   removeTask: (id: string) => void;
@@ -69,7 +83,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     async function hydrate() {
       if (!configured) {
         try {
-          const saved = localStorage.getItem(STORAGE_KEY) || OLD_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
+          const saved = findLocalBackup();
           if (saved) setData(normalizeData(JSON.parse(saved)));
         } catch {
           setData(seedData);
@@ -108,8 +122,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         if (row?.payload) {
           setData(normalizeData(row.payload as Partial<AppData>));
         } else {
-          const userBackup = localStorage.getItem(`${STORAGE_KEY}-${user.id}`);
-          const local = userBackup || localStorage.getItem(STORAGE_KEY) || OLD_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
+          const local = findLocalBackup(user.id);
           const initial = local ? normalizeData(JSON.parse(local)) : seedData;
           setData(initial);
           const { error: insertError } = await supabase.from("workspace_data").upsert({
@@ -127,7 +140,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         console.error("Cloud hydrate failed", error);
         if (cancelled) return;
         try {
-          const saved = localStorage.getItem(`${STORAGE_KEY}-${user.id}`);
+          const saved = findLocalBackup(user.id);
           setData(saved ? normalizeData(JSON.parse(saved)) : seedData);
         } catch {
           setData(seedData);
@@ -210,6 +223,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     removeContract: (id) => setData((prev) => ({ ...prev, contracts: prev.contracts.filter((p) => p.id !== id) })),
     addTransaction: (item) => setData((prev) => ({ ...prev, transactions: [item, ...prev.transactions] })),
     removeTransaction: (id) => setData((prev) => ({ ...prev, transactions: prev.transactions.filter((p) => p.id !== id) })),
+    addInvoice: (item) => setData((prev) => ({ ...prev, invoices: [item, ...prev.invoices] })),
+    updateInvoice: (item) => setData((prev) => ({ ...prev, invoices: prev.invoices.map((p) => p.id === item.id ? item : p) })),
+    removeInvoice: (id) => setData((prev) => ({ ...prev, invoices: prev.invoices.filter((p) => p.id !== id) })),
     addTask: (item) => setData((prev) => ({ ...prev, tasks: [item, ...prev.tasks] })),
     updateTask: (item) => setData((prev) => ({ ...prev, tasks: prev.tasks.map((t) => t.id === item.id ? item : t) })),
     removeTask: (id) => setData((prev) => ({ ...prev, tasks: prev.tasks.filter((t) => t.id !== id) })),

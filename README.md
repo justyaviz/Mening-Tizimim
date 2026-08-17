@@ -1,20 +1,18 @@
-# Mening Tizimim v0.5
+# Mening Tizimim v0.6
 
 Shaxsiy biznes boshqaruv platformasi. Loyiha, mijoz, hamkor, shartnoma, moliya, vazifa, kalendar va professional tarixni bitta joyda saqlaydi.
 
-## v0.5 da yangi
+## v0.6 da yangi
 
-- **Project 360** — har bir loyiha uchun alohida detail sahifa.
-- Project 360 ichida vazifalar, pul oqimi, shartnomalar, hamkorlar, work log, darslar va activity history birlashtiriladi.
-- **Client 360** — har bir mijoz uchun alohida CRM profil.
-- **Aloqa tarixi** — qo‘ng‘iroq, uchrashuv, xabar, izoh va to‘lov yozuvlarini saqlash/tahrirlash/o‘chirish.
-- Mijoz profilida unga bog‘langan loyihalar, shartnomalar va moliya ko‘rinadi.
-- Global Search loyiha va mijozni endi to‘g‘ridan-to‘g‘ri detail sahifasida ochadi.
-- Global Search mijoz aloqa tarixini ham qidiradi.
-- Project va Client listlarda **Batafsil** / profile tugmalari qo‘shildi.
-- Yangi loyiha yaratishda mavjud CRM mijozlarini datalist orqali tanlash mumkin.
-- v0.4 localStorage ma’lumotlari v0.5 ga avtomatik migratsiya qilinadi.
-- Yangi Client Interaction ma’lumotlari Supabase workspace JSON payload bilan avtomatik cloud sync qilinadi.
+- **To‘lovlar & Debitorlar** — invoice/hisob, qoldiq va kechikkan to‘lovlarni nazorat qilish.
+- Hisob statuslari: draft, yuborilgan, qisman, to‘langan, kechikkan va bekor.
+- Qisman to‘lov yozilganda qoldiq avtomatik hisoblanadi.
+- To‘lov qabul qilinganda Moliya bo‘limiga avtomatik kirim tranzaksiyasi yaratiladi.
+- Aktiv oylik shartnomalardan **recurring income** ko‘rsatkichi.
+- To‘lov deadline’lari Kalendar va Global Search bilan integratsiya qilindi.
+- Dashboard’da Payment Control pulse paydo bo‘ldi.
+- v0.5 local/cloud payload v0.6 formatiga avtomatik migratsiya qilinadi.
+- v0.5 dagi Project 360, Client 360, CRM history va barcha avvalgi modullar saqlanadi.
 
 ## Mavjud modullar
 
@@ -24,6 +22,7 @@ Shaxsiy biznes boshqaruv platformasi. Loyiha, mijoz, hamkor, shartnoma, moliya, 
 - Partners CRM
 - Contracts
 - Finance
+- Payments & Receivables
 - Tasks + reminders
 - Calendar
 - Work Journal
@@ -63,6 +62,6 @@ Env mavjud bo‘lmasa tizim avtomatik **Local Demo** rejimida ishlaydi.
 
 ```bash
 git add .
-git commit -m "Upgrade Mening Tizimim to v0.5"
+git commit -m "Upgrade Mening Tizimim to v0.6"
 git push
 ```

@@ -19,7 +19,7 @@ import {
 import { useMemo, useState } from "react";
 import { useAppData } from "@/components/data-provider";
 import { EmptyState, FormActions, Modal, StatusPill } from "@/components/ui";
-import { formatMoney, formatTaskDate, makeId, type ClientInteraction, type InteractionType } from "@/lib/data";
+import { effectiveInvoiceStatus, formatMoney, formatTaskDate, invoiceOutstanding, makeId, type ClientInteraction, type InteractionType } from "@/lib/data";
 
 function same(a: string, b: string) {
   return a.trim().toLowerCase() === b.trim().toLowerCase();
@@ -63,8 +63,9 @@ export default function ClientDetailPage() {
     const projectNames = new Set(projects.map((item) => item.name.toLowerCase()));
     const contracts = data.contracts.filter((item) => names.some((name) => same(item.client, name)) || projectNames.has(item.project.toLowerCase()));
     const transactions = data.transactions.filter((item) => projectNames.has(item.project.toLowerCase()));
+    const invoices = data.invoices.filter((item) => names.some((name) => same(item.client, name)) || projectNames.has(item.project.toLowerCase()));
     const interactions = data.interactions.filter((item) => item.clientId === client.id || same(item.clientName, client.name));
-    return { projects, contracts, transactions, interactions };
+    return { projects, contracts, transactions, invoices, interactions };
   }, [client, data]);
 
   if (!client || !linked) {
@@ -183,6 +184,20 @@ export default function ClientDetailPage() {
                   <StatusPill value={contract.status} />
                 </div>
               )) : <div className="detailEmpty">Shartnoma topilmadi.</div>}
+            </div>
+          </section>
+
+          <section className="detailPanel cardLike">
+            <div className="detailPanelHead"><div><strong>To‘lovlar / Debitor</strong><span>Mijozdan kutilayotgan hisoblar</span></div><Link href="/payments">Barchasi</Link></div>
+            <div className="contract360List">
+              {linked.invoices.length ? linked.invoices.slice().sort((a, b) => a.dueDate.localeCompare(b.dueDate)).map((invoice) => (
+                <div className="invoice360Item" key={invoice.id}>
+                  <div><ReceiptText size={15} /><strong>{invoice.number} · {invoice.title}</strong></div>
+                  <span>{formatMoney(invoice.amount, invoice.currency)} · qoldiq {formatMoney(invoiceOutstanding(invoice), invoice.currency)}</span>
+                  <small><CalendarDays size={12} /> To‘lov muddati: {invoice.dueDate}</small>
+                  <StatusPill value={effectiveInvoiceStatus(invoice)} />
+                </div>
+              )) : <div className="detailEmpty">Mijoz bo‘yicha hisob topilmadi.</div>}
             </div>
           </section>
 

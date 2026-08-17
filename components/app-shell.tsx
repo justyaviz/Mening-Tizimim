@@ -19,6 +19,7 @@ import {
   LogOut,
   Menu,
   NotebookTabs,
+  ReceiptText,
   Search,
   Settings,
   Target,
@@ -38,6 +39,7 @@ const nav = [
   { label: "Hamkorlar", icon: Handshake, href: "/partners" },
   { label: "Shartnomalar", icon: FileSignature, href: "/contracts" },
   { label: "Moliya", icon: WalletCards, href: "/finance" },
+  { label: "To‘lovlar", icon: ReceiptText, href: "/payments" },
   { label: "Vazifalar", icon: ClipboardCheck, href: "/tasks" },
   { label: "Kalendar", icon: CalendarDays, href: "/calendar" },
   { label: "Qilgan ishlarim", icon: NotebookTabs, href: "/work" },
@@ -108,6 +110,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     data.services.forEach((x) => add(x.name, `${x.category} · ${x.unit}`, "/services", "Xizmat", `${x.name} ${x.category} ${x.note}`));
     data.goals.forEach((x) => add(x.title, `${x.category} · ${x.progress}%`, "/goals", "Maqsad", `${x.title} ${x.category} ${x.metric} ${x.note}`));
     data.interactions.forEach((x) => add(x.title, `${x.clientName} · ${x.type}`, `/clients/${x.clientId}`, "Aloqa", `${x.title} ${x.clientName} ${x.summary} ${x.project} ${x.nextAction}`));
+    data.invoices.forEach((x) => add(`${x.number} · ${x.title}`, `${x.client} · ${x.dueDate}`, "/payments", "To‘lov", `${x.number} ${x.title} ${x.client} ${x.project} ${x.note}`));
     return results.slice(0, 9);
   }, [data, searchQuery]);
 
@@ -163,7 +166,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/analytics" className={`navItem ${isActive("/analytics") ? "active" : ""}`}><BarChart3 size={19} /><span>Analitika</span></Link>
           <Link href="/settings" className={`navItem ${isActive("/settings") ? "active" : ""}`}><Settings size={19} /><span>Sozlamalar</span></Link>
           {configured && user && <button className="navItem sidebarLogout" onClick={handleSignOut}><LogOut size={19} /><span>Chiqish</span></button>}
-          <div className="version">Mening Tizimim <b>v0.5</b></div>
+          <div className="version">Mening Tizimim <b>v0.6</b></div>
         </div>
       </aside>
 

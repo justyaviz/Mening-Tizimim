@@ -19,7 +19,7 @@ import {
 import { useMemo } from "react";
 import { useAppData } from "@/components/data-provider";
 import { EmptyState, StatusPill } from "@/components/ui";
-import { formatMoney, formatTaskDate, minutesLabel, type Currency } from "@/lib/data";
+import { effectiveInvoiceStatus, formatMoney, formatTaskDate, invoiceOutstanding, minutesLabel, type Currency } from "@/lib/data";
 
 function same(value: string, projectName: string) {
   return value.trim().toLowerCase() === projectName.trim().toLowerCase();
@@ -44,12 +44,13 @@ export default function ProjectDetailPage() {
     const tasks = data.tasks.filter((item) => same(item.project, project.name));
     const contracts = data.contracts.filter((item) => same(item.project, project.name));
     const transactions = data.transactions.filter((item) => same(item.project, project.name));
+    const invoices = data.invoices.filter((item) => same(item.project, project.name));
     const workLogs = data.workLogs.filter((item) => same(item.project, project.name));
     const lessons = data.lessons.filter((item) => same(item.project, project.name));
     const partners = data.partners.filter((item) => item.projects.split(",").map((v) => v.trim().toLowerCase()).includes(project.name.toLowerCase()));
     const client = data.clients.find((item) => [item.name, item.company].some((value) => value.trim().toLowerCase() === project.client.trim().toLowerCase()));
     const interactions = data.interactions.filter((item) => same(item.project, project.name));
-    return { tasks, contracts, transactions, workLogs, lessons, partners, client, interactions };
+    return { tasks, contracts, transactions, invoices, workLogs, lessons, partners, client, interactions };
   }, [data, project]);
 
   if (!project || !linked) {
@@ -70,6 +71,7 @@ export default function ProjectDetailPage() {
   const activity = [
     ...linked.workLogs.map((item) => ({ id: `work-${item.id}`, date: `${item.date}T12:00`, icon: NotebookTabs, title: item.title, meta: item.result || "Qilgan ish" })),
     ...linked.transactions.map((item) => ({ id: `tx-${item.id}`, date: `${item.date}T09:00`, icon: ReceiptText, title: item.title, meta: `${item.type === "income" ? "Kirim" : "Xarajat"} · ${formatMoney(item.amount, item.currency)}` })),
+    ...linked.invoices.map((item) => ({ id: `invoice-${item.id}`, date: `${item.issueDate}T08:00`, icon: ReceiptText, title: `${item.number} · ${item.title}`, meta: `Hisob · ${formatMoney(item.amount, item.currency)} · qoldiq ${formatMoney(invoiceOutstanding(item), item.currency)}` })),
     ...linked.interactions.map((item) => ({ id: `i-${item.id}`, date: item.date, icon: UserRound, title: item.title, meta: `${item.clientName} · ${item.summary}` })),
     ...linked.tasks.filter((item) => item.completedAt).map((item) => ({ id: `task-${item.id}`, date: item.completedAt || item.dueAt, icon: CheckCircle2, title: item.title, meta: "Vazifa bajarildi" })),
   ].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
@@ -158,6 +160,20 @@ export default function ProjectDetailPage() {
             <div className="detailPanelHead"><div><strong>Shartnomalar</strong><span>Huquqiy va billing nazorati</span></div><Link href="/contracts">Barchasi</Link></div>
             <div className="contract360List">
               {linked.contracts.length ? linked.contracts.map((contract) => <div className="contract360Item" key={contract.id}><div><FileSignature size={15} /><strong>{contract.title}</strong></div><span>{formatMoney(contract.amount, contract.currency)} · {contract.billing === "monthly" ? "oylik" : "bir martalik"}</span><small><CalendarClock size={12} /> {contract.startDate} → {contract.endDate}</small><StatusPill value={contract.status} /></div>) : <div className="detailEmpty">Shartnoma biriktirilmagan.</div>}
+            </div>
+          </section>
+
+          <section className="detailPanel cardLike">
+            <div className="detailPanelHead"><div><strong>To‘lovlar</strong><span>Hisoblar va debitor qoldiq</span></div><Link href="/payments">Payment Control</Link></div>
+            <div className="contract360List">
+              {linked.invoices.length ? linked.invoices.slice().sort((a, b) => a.dueDate.localeCompare(b.dueDate)).map((invoice) => (
+                <div className="invoice360Item" key={invoice.id}>
+                  <div><ReceiptText size={15} /><strong>{invoice.number} · {invoice.title}</strong></div>
+                  <span>{invoice.client} · {formatMoney(invoice.amount, invoice.currency)}</span>
+                  <small><CalendarClock size={12} /> {invoice.dueDate} · qoldiq {formatMoney(invoiceOutstanding(invoice), invoice.currency)}</small>
+                  <StatusPill value={effectiveInvoiceStatus(invoice)} />
+                </div>
+              )) : <div className="detailEmpty">Bu loyiha bo‘yicha hisob yo‘q.</div>}
             </div>
           </section>
 

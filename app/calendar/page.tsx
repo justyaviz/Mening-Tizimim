@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/ui";
 import { useAppData } from "@/components/data-provider";
 import { dateKey } from "@/lib/data";
 
-type CalendarEvent = { id: string; date: string; title: string; kind: "task" | "project" | "contract" };
+type CalendarEvent = { id: string; date: string; title: string; kind: "task" | "project" | "contract" | "invoice" };
 
 const weekdays = ["Du", "Se", "Cho", "Pa", "Ju", "Sha", "Ya"];
 const monthFmt = new Intl.DateTimeFormat("uz-UZ", { month: "long", year: "numeric" });
@@ -19,6 +19,7 @@ export default function CalendarPage() {
     ...data.tasks.filter((t) => t.dueAt).map((t) => ({ id: `task-${t.id}`, date: dateKey(t.dueAt), title: t.title, kind: "task" as const })),
     ...data.projects.filter((p) => p.deadline).map((p) => ({ id: `project-${p.id}`, date: p.deadline.slice(0, 10), title: `${p.name} deadline`, kind: "project" as const })),
     ...data.contracts.filter((c) => c.endDate).map((c) => ({ id: `contract-${c.id}`, date: c.endDate.slice(0, 10), title: `${c.title} tugaydi`, kind: "contract" as const })),
+    ...data.invoices.filter((invoice) => invoice.dueDate && invoice.status !== "paid" && invoice.status !== "cancelled").map((invoice) => ({ id: `invoice-${invoice.id}`, date: invoice.dueDate.slice(0, 10), title: `${invoice.client} to‘lovi`, kind: "invoice" as const })),
   ], [data]);
 
   const cells = useMemo(() => {
@@ -48,7 +49,7 @@ export default function CalendarPage() {
 
   return (
     <div className="pageWrap">
-      <PageHeader eyebrow="SCHEDULE" title="Kalendar" subtitle="Vazifa, loyiha deadline va shartnoma muddatlarini bitta kalendarda ko‘ring." />
+      <PageHeader eyebrow="SCHEDULE" title="Kalendar" subtitle="Vazifa, loyiha deadline, shartnoma va to‘lov muddatlarini bitta kalendarda ko‘ring." />
       <section className="calendarCard cardLike calendarV3">
         <div className="calendarTop">
           <div><CalendarDays size={18} /><strong>{monthFmt.format(cursor)}</strong></div>
@@ -67,7 +68,7 @@ export default function CalendarPage() {
           ))}
         </div>
       </section>
-      <div className="calendarLegend"><span><i className="task" /> Vazifa</span><span><i className="project" /> Loyiha deadline</span><span><i className="contract" /> Shartnoma</span></div>
+      <div className="calendarLegend"><span><i className="task" /> Vazifa</span><span><i className="project" /> Loyiha deadline</span><span><i className="contract" /> Shartnoma</span><span><i className="invoice" /> To‘lov muddati</span></div>
     </div>
   );
 }

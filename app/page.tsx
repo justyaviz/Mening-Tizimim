@@ -12,12 +12,13 @@ import {
   Plus,
   Lightbulb,
   NotebookTabs,
+  ReceiptText,
   Target,
   WalletCards,
 } from "lucide-react";
 import { useMemo } from "react";
 import { useAppData } from "@/components/data-provider";
-import { formatMoney, formatTaskDate, shortMoney } from "@/lib/data";
+import { effectiveInvoiceStatus, formatMoney, formatTaskDate, invoiceOutstanding, shortMoney } from "@/lib/data";
 
 export default function Home() {
   const { data, toggleTask } = useAppData();
@@ -30,6 +31,17 @@ export default function Home() {
     const expectedUsd = data.contracts.filter((c) => c.status === "active" || c.status === "ending").filter((c) => c.currency === "USD").reduce((s, c) => s + c.amount, 0);
     return { activeProjects, income, expense, expected, expectedUsd };
   }, [data]);
+
+  const paymentSummary = useMemo(() => {
+    const open = data.invoices.filter((invoice) => invoiceOutstanding(invoice) > 0 && !["draft", "cancelled"].includes(effectiveInvoiceStatus(invoice)));
+    const overdue = open.filter((invoice) => effectiveInvoiceStatus(invoice) === "overdue");
+    return {
+      openCount: open.length,
+      overdueCount: overdue.length,
+      uzs: open.filter((invoice) => invoice.currency === "UZS").reduce((sum, invoice) => sum + invoiceOutstanding(invoice), 0),
+      usd: open.filter((invoice) => invoice.currency === "USD").reduce((sum, invoice) => sum + invoiceOutstanding(invoice), 0),
+    };
+  }, [data.invoices]);
 
   const currentDate = new Intl.DateTimeFormat("uz-UZ", { weekday: "long", day: "2-digit", month: "long" }).format(new Date()).toUpperCase();
   const active = data.projects.filter((p) => p.status === "active").slice(0, 3);
@@ -69,7 +81,15 @@ export default function Home() {
         <Link href="/lessons"><Lightbulb size={17} /><span><strong>{data.lessons.length}</strong><small>Xato & darslar</small></span></Link>
         <Link href="/goals"><Target size={17} /><span><strong>{data.goals.filter((x) => x.status === "active").length}</strong><small>Aktiv maqsadlar</small></span></Link>
         <Link href="/services"><BriefcaseBusiness size={17} /><span><strong>{data.services.filter((x) => x.active).length}</strong><small>Aktiv xizmatlar</small></span></Link>
+        <Link href="/payments"><ReceiptText size={17} /><span><strong>{paymentSummary.openCount}</strong><small>Kutilayotgan to‘lov</small></span></Link>
       </section>
+
+      <Link href="/payments" className={`paymentPulse ${paymentSummary.overdueCount ? "hasOverdue" : ""}`}>
+        <div className="paymentPulseIcon"><ReceiptText size={19} /></div>
+        <div><span>PAYMENT CONTROL</span><strong>{paymentSummary.openCount ? `${paymentSummary.openCount} ta ochiq hisob` : "Ochiq hisob yo‘q"}</strong><small>{paymentSummary.uzs ? `${shortMoney(paymentSummary.uzs)} so‘m kutilmoqda` : paymentSummary.usd ? `${formatMoney(paymentSummary.usd, "USD")} kutilmoqda` : "Barcha hisoblar yopilgan"}</small></div>
+        <div className="paymentPulseRight"><strong>{paymentSummary.overdueCount}</strong><span>kechikkan</span></div>
+        <ChevronRight size={17} />
+      </Link>
 
       <section className="dashboardGrid">
         <div className="card projectsCard">
@@ -142,7 +162,7 @@ export default function Home() {
           })}
           <div className="miniInsight">
             <FileSignature size={19} />
-            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.5 da loyiha 360 va mijoz aloqa tarixi ham cloud bazaga sinxronlanadi.</span></div>
+            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.6 da hisoblar, debitorlar va to‘lov qoldiqlari ham cloud bazaga sinxronlanadi.</span></div>
           </div>
         </div>
       </section>
