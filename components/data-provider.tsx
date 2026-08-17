@@ -6,8 +6,8 @@ import { normalizeData, seedData } from "@/lib/data";
 import { getSupabaseClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 
-const STORAGE_KEY = "mening-tizimim-v0.7-data";
-const OLD_STORAGE_KEYS = ["mening-tizimim-v0.6-data", "mening-tizimim-v0.5-data", "mening-tizimim-v0.4-data", "mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
+const STORAGE_KEY = "mening-tizimim-v0.8-data";
+const OLD_STORAGE_KEYS = ["mening-tizimim-v0.7-data", "mening-tizimim-v0.6-data", "mening-tizimim-v0.5-data", "mening-tizimim-v0.4-data", "mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
 
 function findLocalBackup(userId?: string) {
   const keys = userId

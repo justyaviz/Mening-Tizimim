@@ -1,5 +1,15 @@
 # Mening Tizimim Changelog
 
+## v0.8.0
+- Contract Builder qayta qurildi: asosiy shartnoma 19 ta bo‘lim bilan to‘liq struktura.
+- Xizmatlar tanloviga qarab SMM, mobilografiya, montaj, target va boshqa marketing xizmatlari dinamik chiqadi.
+- 1-ilova: loyiha, muddat, narx, xizmat paketi, kontent hajmi, syomka, ish tartibi, target, eksklyuzivlik va maxsus vazifalar.
+- 2-ilova: Buyurtmachi va Bajaruvchining to‘liq rekvizitlari va imzo joylari.
+- Contract modeli yangi professional maydonlar bilan kengaytirildi.
+- PDF footer: shartnoma raqami, Document ID, sahifa X/8.
+- Print layout header/footer safe-zone bilan yangilandi.
+- v0.7 localStorage v0.8 formatiga migratsiya qilinadi.
+
 ## v0.7.2
 - Contract preview header spacing fixed so document title no longer overlaps the logo area.
 - Contract pagination rebalanced from 4 sparse pages to 3 fuller pages.

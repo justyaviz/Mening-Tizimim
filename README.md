@@ -1,38 +1,17 @@
-# Mening Tizimim v0.7
+# Mening Tizimim v0.8
 
-Shaxsiy biznes boshqaruv platformasi. Loyiha, mijoz, hamkor, shartnoma, moliya, vazifa, kalendar va professional tarixni bitta joyda saqlaydi.
+Shaxsiy biznes boshqaruv platformasi.
 
-## v0.7 da yangi
+## v0.8 — Professional Contract Builder
 
-- **To‘lovlar & Debitorlar** — invoice/hisob, qoldiq va kechikkan to‘lovlarni nazorat qilish.
-- Hisob statuslari: draft, yuborilgan, qisman, to‘langan, kechikkan va bekor.
-- Qisman to‘lov yozilganda qoldiq avtomatik hisoblanadi.
-- To‘lov qabul qilinganda Moliya bo‘limiga avtomatik kirim tranzaksiyasi yaratiladi.
-- Aktiv oylik shartnomalardan **recurring income** ko‘rsatkichi.
-- To‘lov deadline’lari Kalendar va Global Search bilan integratsiya qilindi.
-- Dashboard’da Payment Control pulse paydo bo‘ldi.
-- v0.5 local/cloud payload v0.7 formatiga avtomatik migratsiya qilinadi.
-- v0.5 dagi Project 360, Client 360, CRM history va barcha avvalgi modullar saqlanadi.
-
-## Mavjud modullar
-
-- Dashboard
-- Projects + Project 360
-- Clients CRM + Client 360 + interaction history
-- Partners CRM
-- Contracts
-- Finance
-- Payments & Receivables
-- Tasks + reminders
-- Calendar
-- Work Journal
-- Lessons / Mistakes / Wins
-- Services catalog
-- Goals
-- Analytics
-- Global Search
-- Settings + JSON backup
-- Supabase Auth + cloud sync + RLS
+- Marketing xizmatlari bo‘yicha to‘liq 19 bo‘limli asosiy shartnoma.
+- Tanlangan xizmatlar asosida dinamik xizmat bandlari.
+- 1-ilova: Loyiha bo‘yicha maxsus shartlar.
+- 2-ilova: Taraflarning to‘liq rekvizitlari.
+- Kontent hajmi, syomka, ish tartibi, target reklama va eksklyuzivlik maydonlari.
+- Har bir PDF sahifasida shartnoma raqami, Document ID va sahifa raqami.
+- A4 firma blankasi uchun xavfsiz header/footer zonalari.
+- v0.7 localStorage ma’lumotlari avtomatik migratsiya qilinadi.
 
 ## Ishga tushirish
 
@@ -41,32 +20,16 @@ npm install
 npm run dev
 ```
 
-Brauzerda `http://localhost:3000` ni oching.
+## Production build
 
-## Supabase cloud ulash
-
-1. Supabase project yarating.
-2. `supabase/schema.sql` ni SQL Editor orqali ishga tushiring.
-3. `.env.example` dan `.env.local` yarating:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+```bash
+npm run build
 ```
-
-4. `npm run dev` yoki Vercel deploy qiling.
-
-Env mavjud bo‘lmasa tizim avtomatik **Local Demo** rejimida ishlaydi.
 
 ## GitHub
 
 ```bash
 git add .
-git commit -m "Upgrade Mening Tizimim to v0.7"
+git commit -m "Upgrade Mening Tizimim to v0.8"
 git push
 ```
-
-
-## v0.7 Contract Builder
-
-`/contracts/builder` sahifasi Marketing xizmatlari shartnomasini to‘ldirish, mijoz/biznes/loyihaga biriktirish, A4 blankada jonli ko‘rish va Word/PDF uchun chiqarishga tayyorlaydi.
