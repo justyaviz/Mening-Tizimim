@@ -10,6 +10,8 @@ import {
   FolderKanban,
   MoreHorizontal,
   Plus,
+  Lightbulb,
+  NotebookTabs,
   Target,
   WalletCards,
 } from "lucide-react";
@@ -60,6 +62,13 @@ export default function Home() {
         <StatCard icon={CircleDollarSign} label="Jami daromad" value={shortMoney(stats.income)} hint="so‘m" trend="cloud + local" />
         <StatCard icon={WalletCards} label="Jami xarajat" value={shortMoney(stats.expense)} hint="so‘m" trend={stats.income ? `${Math.round((stats.expense / stats.income) * 100)}% daromaddan` : "0%"} />
         <StatCard icon={BriefcaseBusiness} label="Aktiv shartnomalar" value={String(data.contracts.filter((c) => c.status === "active" || c.status === "ending").length)} hint={stats.expectedUsd ? `${formatMoney(stats.expectedUsd, "USD")} qiymat` : "nazoratda"} trend="shartnomalar" />
+      </section>
+
+      <section className="quickModuleStrip">
+        <Link href="/work"><NotebookTabs size={17} /><span><strong>{data.workLogs.length}</strong><small>Qilgan ishlarim</small></span></Link>
+        <Link href="/lessons"><Lightbulb size={17} /><span><strong>{data.lessons.length}</strong><small>Xato & darslar</small></span></Link>
+        <Link href="/goals"><Target size={17} /><span><strong>{data.goals.filter((x) => x.status === "active").length}</strong><small>Aktiv maqsadlar</small></span></Link>
+        <Link href="/services"><BriefcaseBusiness size={17} /><span><strong>{data.services.filter((x) => x.active).length}</strong><small>Aktiv xizmatlar</small></span></Link>
       </section>
 
       <section className="dashboardGrid">
@@ -133,7 +142,7 @@ export default function Home() {
           })}
           <div className="miniInsight">
             <FileSignature size={19} />
-            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.3 da barcha ma’lumot cloud bazaga avtomatik sinxronlanadi.</span></div>
+            <div><strong>{data.contracts.length} ta shartnoma bazada</strong><span>v0.4 da biznes xotira, xizmatlar va maqsadlar ham cloud bazaga sinxronlanadi.</span></div>
           </div>
         </div>
       </section>

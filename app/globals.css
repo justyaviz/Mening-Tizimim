@@ -492,3 +492,127 @@ button.dangerButton, .dangerButton { color: #cf4b57 !important; background: #fff
   .loginCard h2 { font-size: 21px; }
   .taskTitleLine { align-items: flex-start; flex-direction: column; }
 }
+
+/* ===== v0.4 — Professional memory, services, goals & global search ===== */
+.sidebar { overflow: hidden; }
+.navList { min-height: 0; overflow-y: auto; padding-right: 3px; scrollbar-width: thin; scrollbar-color: #dfe7f2 transparent; }
+.sidebarBottom { flex: 0 0 auto; margin-top: 10px; }
+.searchWrapV4 { position: relative; width: min(430px, 50vw); }
+.searchWrapV4 .searchBox { width: 100%; }
+.globalSearchPanel { position: absolute; left: 0; right: 0; top: calc(100% + 8px); background: white; border: 1px solid #e4eaf2; border-radius: 14px; box-shadow: 0 22px 55px rgba(17,38,74,.16); padding: 7px; z-index: 80; max-height: 430px; overflow: auto; }
+.globalSearchHead { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px 9px; border-bottom: 1px solid #eef2f6; margin-bottom: 3px; color: #8c98aa; font-size: 7px; text-transform: uppercase; letter-spacing: .08em; }
+.globalSearchHead b { min-width: 20px; height: 20px; display: grid; place-items: center; border-radius: 99px; background: #edf5ff; color: var(--blue); font-size: 8px; }
+.globalSearchItem { width: 100%; display: grid; grid-template-columns: 64px 1fr; gap: 9px; align-items: center; text-align: left; border: 0; background: transparent; border-radius: 9px; padding: 8px; cursor: pointer; }
+.globalSearchItem:hover { background: #f6f9fd; }
+.searchKind { display: inline-flex; align-items: center; justify-content: center; min-height: 24px; border-radius: 7px; background: #edf5ff; color: #3473c6; font-size: 6.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.searchCopy { min-width: 0; }
+.searchCopy strong, .searchCopy small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.searchCopy strong { color: #344258; font-size: 8.5px; }
+.searchCopy small { color: #8c98aa; font-size: 7px; margin-top: 3px; }
+
+.partnerGrid .partnerNote { margin: 10px 0 0; padding-top: 9px; border-top: 1px solid #eef2f6; color: #7d8a9d; font-size: 7.5px; line-height: 1.6; }
+
+.workTimeline { display: flex; flex-direction: column; gap: 9px; }
+.workLogCard { display: grid; grid-template-columns: 78px 40px minmax(0,1fr) auto; align-items: stretch; gap: 10px; padding: 13px; border-radius: 14px; }
+.workDate { position: relative; display: flex; align-items: flex-start; justify-content: flex-end; padding: 8px 7px 0 0; }
+.workDate span { font-size: 7px; color: #8591a3; white-space: nowrap; }
+.workDate i { position: absolute; right: -22px; top: 20px; width: 12px; height: 1px; background: #dbe5f0; }
+.workIcon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: #edf5ff; color: var(--blue); margin-top: 1px; }
+.workMain { min-width: 0; }
+.workTitleRow { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.workTitleRow strong { color: #2f3e55; font-size: 10px; line-height: 1.45; }
+.workTitleRow p { margin: 4px 0 0; color: #8b97a9; font-size: 7px; }
+.timeChip { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; background: #f6f8fb; border: 1px solid #e9eef5; color: #69788e; border-radius: 99px; padding: 5px 8px; font-size: 7px; }
+.workResult { margin-top: 10px; padding: 9px 10px; border-radius: 9px; background: #f8fbff; border: 1px solid #ebf2fb; }
+.workResult span { display: block; color: #6f83a1; font-size: 6.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.workResult p { margin: 4px 0 0; color: #526177; font-size: 7.8px; line-height: 1.6; }
+.workNote { margin: 8px 0 0; color: #8793a5; font-size: 7.2px; line-height: 1.55; }
+.workActions { display: flex; gap: 5px; align-items: flex-start; }
+.workActions button { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid #e5ebf3; background: white; color: #758297; border-radius: 8px; padding: 0; }
+
+.lessonGrid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.lessonCard { position: relative; background: white; border: 1px solid var(--line); border-radius: 15px; padding: 15px; overflow: hidden; }
+.lessonCard::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: #8fb9fb; }
+.lessonCard.mistake::before { background: #e17b84; }.lessonCard.win::before { background: #e3b651; }.lessonCard.lesson::before { background: #6b9fea; }
+.lessonTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lessonType { display: inline-flex; align-items: center; gap: 6px; color: #5f75a0; }
+.lessonCard.mistake .lessonType { color: #b54f5b; }.lessonCard.win .lessonType { color: #aa7719; }
+.lessonType span { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.lessonDate { font-size: 6.5px; color: #9aa5b4; }
+.lessonCard h2 { margin: 13px 0 4px; color: var(--navy); font-size: 12px; letter-spacing: -.02em; }
+.lessonProject { margin: 0; color: #8b97a8; font-size: 7px; }
+.lessonSection { margin-top: 13px; }
+.lessonSection span { display: block; color: #8996a8; font-size: 6.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.lessonSection p { margin: 5px 0 0; color: #66758a; font-size: 7.5px; line-height: 1.6; }
+.lessonSection.strong { padding: 10px; border-radius: 9px; background: #f8fbff; border: 1px solid #edf3fb; }
+.lessonSection.strong p { color: #46576f; font-weight: 500; }
+.lessonAction { display: flex; gap: 8px; margin-top: 11px; padding: 9px 10px; border-radius: 9px; background: #f2faf6; color: #27845f; }
+.lessonAction div { min-width: 0; }.lessonAction span, .lessonAction strong { display: block; }
+.lessonAction span { font-size: 6px; text-transform: uppercase; letter-spacing: .05em; opacity: .72; }
+.lessonAction strong { color: #497461; font-size: 7.2px; line-height: 1.5; margin-top: 3px; }
+.lessonButtons { display: flex; gap: 6px; margin-top: 12px; }
+.lessonButtons button { min-height: 31px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #e3e9f1; border-radius: 8px; background: white; color: #718096; padding: 0 9px; font-size: 7px; }
+
+.serviceGrid, .goalGrid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.serviceCard, .goalCard { background: white; border: 1px solid var(--line); border-radius: 15px; padding: 15px; box-shadow: 0 8px 24px rgba(19,42,82,.025); }
+.serviceTop, .goalTop { display: flex; align-items: center; justify-content: space-between; }
+.serviceState { font-size: 6.5px; font-weight: 700; letter-spacing: .05em; border-radius: 99px; padding: 5px 7px; }
+.serviceState.on { color: #23795b; background: #eaf8f2; }.serviceState.off { color: #7d899a; background: #f0f3f7; }
+.serviceCategory { margin: 14px 0 4px; color: var(--blue); font-size: 6.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.serviceCard h2, .goalCard h2 { margin: 0; color: var(--navy); font-size: 13px; letter-spacing: -.025em; }
+.servicePrice { display: flex; align-items: baseline; gap: 5px; margin-top: 15px; }
+.servicePrice strong { color: #253754; font-size: 16px; letter-spacing: -.03em; }.servicePrice span { color: #8a97a8; font-size: 7px; }
+.serviceStats, .goalMetrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-top: 13px; }
+.serviceStats div, .goalMetrics div { border-radius: 9px; background: #f8fafc; border: 1px solid #edf1f6; padding: 8px; min-width: 0; }
+.serviceStats span, .serviceStats b, .goalMetrics span, .goalMetrics b { display: block; }
+.serviceStats span, .goalMetrics span { color: #97a2b1; font-size: 5.8px; line-height: 1.35; }
+.serviceStats b, .goalMetrics b { color: #56657b; font-size: 7px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; }
+.serviceNote { min-height: 32px; margin: 11px 0 0; color: #8490a2; font-size: 7.2px; line-height: 1.55; }
+.serviceCard .entityActions, .goalCard .entityActions { margin: 13px -15px -15px; padding: 11px 15px; border-top: 1px solid #edf1f6; }
+.goalProgressLine { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin-top: 16px; }
+.goalProgressLine strong { font-size: 9px; color: var(--blue); }.goalProgressLine .progress { margin: 0; }
+.goalCard .entityMeta { margin-top: 10px; }
+
+.analyticsV4Grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 12px; margin-top: 12px; }
+.analyticsPanel { background: white; border: 1px solid var(--line); border-radius: 15px; padding: 15px; }
+.analyticsPanelHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.analyticsPanelHead strong { display: block; font-size: 10px; color: #344258; }.analyticsPanelHead span { display: block; margin-top: 4px; font-size: 7px; color: #8c98aa; }
+.monthBars { height: 190px; display: flex; align-items: flex-end; gap: 10px; border-bottom: 1px solid #e8edf4; padding: 0 8px; }
+.monthBarGroup { flex: 1; height: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; position: relative; }
+.monthBarGroup i { width: min(14px, 34%); min-height: 2px; border-radius: 5px 5px 0 0; background: #74a9f8; }
+.monthBarGroup i.expense { background: #ed9aa3; }
+.monthBarGroup span { position: absolute; bottom: -19px; font-size: 6px; color: #929eae; }
+.analyticsLegend { display: flex; gap: 14px; margin-top: 29px; font-size: 7px; color: #78869a; }
+.analyticsLegend span { display: inline-flex; align-items: center; gap: 5px; }.analyticsLegend i { width: 7px; height: 7px; border-radius: 2px; background: #74a9f8; }.analyticsLegend i.expense { background: #ed9aa3; }
+.categoryList { display: flex; flex-direction: column; gap: 11px; }
+.categoryRow { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.categoryRow > div:first-child { min-width: 0; }.categoryRow strong { display: block; color: #536176; font-size: 7.5px; }.categoryRow small { color: #98a2b2; font-size: 6px; }
+.categoryBar { height: 5px; background: #eef2f6; border-radius: 99px; overflow: hidden; margin-top: 5px; }.categoryBar i { display: block; height: 100%; background: #6fa7fb; border-radius: inherit; }
+.categoryValue { color: #354861; font-size: 7.5px; font-weight: 700; }
+
+@media (max-width: 1100px) {
+  .lessonGrid, .serviceGrid, .goalGrid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .analyticsV4Grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .searchWrapV4 { width: 100%; max-width: none; }
+  .globalSearchPanel { position: fixed; top: 64px; left: 12px; right: 12px; }
+  .workLogCard { grid-template-columns: 36px 1fr auto; }
+  .workDate { grid-column: 1 / -1; justify-content: flex-start; padding: 0; }
+  .workDate i { display: none; }
+  .workIcon { grid-column: 1; }.workMain { grid-column: 2; }.workActions { grid-column: 3; }
+  .lessonGrid, .serviceGrid, .goalGrid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .workTitleRow { flex-direction: column; }.timeChip { align-self: flex-start; }
+  .serviceStats, .goalMetrics { grid-template-columns: 1fr; }
+}
+.lessonMiniStats { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }
+.lessonMiniStats div { padding: 13px; border: 1px solid #edf1f6; border-radius: 10px; background: #fafbfd; }
+.lessonMiniStats span, .lessonMiniStats strong { display: block; }.lessonMiniStats span { color: #909cad; font-size: 7px; }.lessonMiniStats strong { margin-top: 5px; color: var(--navy); font-size: 18px; }
+.quickModuleStrip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: -2px 0 14px; }
+.quickModuleStrip a { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 13px; background: white; color: var(--blue); text-decoration: none; transition: .18s ease; }
+.quickModuleStrip a:hover { transform: translateY(-1px); border-color: #cfe0f7; box-shadow: 0 10px 25px rgba(16,49,93,.05); }
+.quickModuleStrip span, .quickModuleStrip strong, .quickModuleStrip small { display: block; }.quickModuleStrip strong { color: var(--navy); font-size: 12px; }.quickModuleStrip small { margin-top: 2px; color: #8b97a8; font-size: 6.5px; }
+@media (max-width: 900px) { .quickModuleStrip { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .quickModuleStrip { grid-template-columns: 1fr; } }

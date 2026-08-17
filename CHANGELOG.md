@@ -1,20 +1,29 @@
 # Changelog
 
-## v0.3.0 — Cloud + Tasks
+## 0.4.0 — 2026-08-17
 
-- Supabase Auth bilan email/parol login va signup oqimi qo‘shildi.
-- Supabase `workspace_data` cloud bazasi va RLS schema qo‘shildi.
-- Cloud sinxronlash + local backup ishlaydi; Supabase bo‘lmasa local demo rejimi saqlanadi.
-- Vazifalar moduli to‘liq CRUD, status, priority, deadline va reminder bilan ishlaydi.
-- Browser notification reminderlari ilova ochiq paytda ishlaydi.
-- Dashboard vazifalari endi real Task bazasidan olinadi.
-- Kalendar vazifa, loyiha deadline va shartnoma tugash sanalarini birlashtiradi.
-- Topbar notification center qo‘shildi.
-- Settings sahifasida sync holati, auth, RLS va JSON backup mavjud.
-- UI version v0.3 ga yangilandi.
+### Added
+- Work Journal / “Qilgan ishlarim” CRUD.
+- Lessons, mistakes and wins knowledge base.
+- Services catalog with price, estimated cost, margin and delivery time.
+- Goals module with measurable progress.
+- Full partners CRUD.
+- Global Cmd/Ctrl + K search across the workspace.
+- Real analytics for monthly UZS cashflow, revenue categories and work time.
+- Dashboard quick links for the new v0.4 modules.
 
-## v0.2.0
+### Changed
+- Sidebar expanded with Work, Lessons, Services and Goals.
+- Data model expanded while keeping the single Supabase JSON workspace payload.
+- Local storage key upgraded to `mening-tizimim-v0.4-data` with v0.3/v0.2 migration fallback.
+- Settings backup/reset copy updated for the v0.4 data model.
 
-- Projects, Clients, Contracts va Finance CRUD.
-- LocalStorage persistence.
-- Dashboard va analytics preview.
+## 0.3.0
+- Supabase Auth and cloud sync.
+- Tasks CRUD, reminders and browser notifications.
+- Calendar aggregation.
+- Cloud/local migration and JSON backup.
+
+## 0.2.0
+- Projects, Clients, Contracts and Finance CRUD.
+- LocalStorage persistence and multi-page navigation.

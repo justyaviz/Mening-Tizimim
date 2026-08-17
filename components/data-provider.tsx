@@ -1,13 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import type { AppData, Client, Contract, Project, Task, Transaction } from "@/lib/data";
+import type { AppData, Client, Contract, Goal, Lesson, Partner, Project, Service, Task, Transaction, WorkLog } from "@/lib/data";
 import { normalizeData, seedData } from "@/lib/data";
 import { getSupabaseClient } from "@/lib/supabase";
 import { useAuth } from "@/components/auth-provider";
 
-const STORAGE_KEY = "mening-tizimim-v0.3-data";
-const OLD_STORAGE_KEY = "mening-tizimim-v0.2-data";
+const STORAGE_KEY = "mening-tizimim-v0.4-data";
+const OLD_STORAGE_KEYS = ["mening-tizimim-v0.3-data", "mening-tizimim-v0.2-data"];
 
 export type SyncStatus = "local" | "loading" | "syncing" | "synced" | "error";
 
@@ -30,6 +30,21 @@ type DataContextValue = {
   updateTask: (item: Task) => void;
   removeTask: (id: string) => void;
   toggleTask: (id: string) => void;
+  addPartner: (item: Partner) => void;
+  updatePartner: (item: Partner) => void;
+  removePartner: (id: string) => void;
+  addWorkLog: (item: WorkLog) => void;
+  updateWorkLog: (item: WorkLog) => void;
+  removeWorkLog: (id: string) => void;
+  addLesson: (item: Lesson) => void;
+  updateLesson: (item: Lesson) => void;
+  removeLesson: (id: string) => void;
+  addService: (item: Service) => void;
+  updateService: (item: Service) => void;
+  removeService: (id: string) => void;
+  addGoal: (item: Goal) => void;
+  updateGoal: (item: Goal) => void;
+  removeGoal: (id: string) => void;
   replaceData: (next: AppData) => void;
   resetDemo: () => void;
 };
@@ -51,7 +66,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     async function hydrate() {
       if (!configured) {
         try {
-          const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
+          const saved = localStorage.getItem(STORAGE_KEY) || OLD_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
           if (saved) setData(normalizeData(JSON.parse(saved)));
         } catch {
           setData(seedData);
@@ -91,7 +106,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           setData(normalizeData(row.payload as Partial<AppData>));
         } else {
           const userBackup = localStorage.getItem(`${STORAGE_KEY}-${user.id}`);
-          const local = userBackup || localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
+          const local = userBackup || localStorage.getItem(STORAGE_KEY) || OLD_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
           const initial = local ? normalizeData(JSON.parse(local)) : seedData;
           setData(initial);
           const { error: insertError } = await supabase.from("workspace_data").upsert({
@@ -205,6 +220,21 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           }
         : task),
     })),
+    addPartner: (item) => setData((prev) => ({ ...prev, partners: [item, ...prev.partners] })),
+    updatePartner: (item) => setData((prev) => ({ ...prev, partners: prev.partners.map((p) => p.id === item.id ? item : p) })),
+    removePartner: (id) => setData((prev) => ({ ...prev, partners: prev.partners.filter((p) => p.id !== id) })),
+    addWorkLog: (item) => setData((prev) => ({ ...prev, workLogs: [item, ...prev.workLogs] })),
+    updateWorkLog: (item) => setData((prev) => ({ ...prev, workLogs: prev.workLogs.map((p) => p.id === item.id ? item : p) })),
+    removeWorkLog: (id) => setData((prev) => ({ ...prev, workLogs: prev.workLogs.filter((p) => p.id !== id) })),
+    addLesson: (item) => setData((prev) => ({ ...prev, lessons: [item, ...prev.lessons] })),
+    updateLesson: (item) => setData((prev) => ({ ...prev, lessons: prev.lessons.map((p) => p.id === item.id ? item : p) })),
+    removeLesson: (id) => setData((prev) => ({ ...prev, lessons: prev.lessons.filter((p) => p.id !== id) })),
+    addService: (item) => setData((prev) => ({ ...prev, services: [item, ...prev.services] })),
+    updateService: (item) => setData((prev) => ({ ...prev, services: prev.services.map((p) => p.id === item.id ? item : p) })),
+    removeService: (id) => setData((prev) => ({ ...prev, services: prev.services.filter((p) => p.id !== id) })),
+    addGoal: (item) => setData((prev) => ({ ...prev, goals: [item, ...prev.goals] })),
+    updateGoal: (item) => setData((prev) => ({ ...prev, goals: prev.goals.map((p) => p.id === item.id ? item : p) })),
+    removeGoal: (id) => setData((prev) => ({ ...prev, goals: prev.goals.filter((p) => p.id !== id) })),
     replaceData: (next) => setData(normalizeData(next)),
     resetDemo: () => setData(seedData),
   }), [data, ready, syncStatus]);
